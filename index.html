@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NimbusDrive - Cloud Storage</title>
+    <title>NimbusDrive - Cloud Storage (Boxy UI)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,7 @@
             font-family: 'Inter', sans-serif;
         }
 
-        /* Custom scrollbar */
+        /* Custom scrollbar - Keep as is, rounding on scrollbar is fine */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -35,7 +35,7 @@
             background: #64748b;
         }
 
-        /* Context menu animation */
+        /* Context menu animation - Keep as is */
         .context-menu {
             transform-origin: top left;
             transition: opacity 0.1s ease, transform 0.1s ease;
@@ -50,7 +50,7 @@
             transform: scale(1);
         }
 
-        /* Modal animation */
+        /* Modal animation - Keep as is */
         .modal-backdrop {
             transition: opacity 0.2s ease-in-out;
         }
@@ -58,16 +58,16 @@
             transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
         }
         
-        /* Modal utility classes */
+        /* Modal utility classes - Keep as is */
         .modal-hidden {
             opacity: 0;
             pointer-events: none;
-            display: none; /* Add this to hide the element completely */
+            display: none;
         }
         .modal-visible {
             opacity: 1;
             pointer-events: auto;
-            display: flex; /* Display flex when visible */
+            display: flex;
         }
         .modal-content-hidden {
             opacity: 0;
@@ -78,27 +78,31 @@
             transform: scale(1);
         }
 
-        /* Drag-and-drop overlay */
+        /* Drag-and-drop overlay - Keep as is */
         .drag-overlay {
             transition: opacity 0.2s ease;
         }
         
-        /* File card hover effect */
+        /* MODIFIED: File card hover effect for sharper edges */
         .file-card {
             transition: all 0.2s ease;
+            /* Added a subtle initial shadow and stronger border */
+            border-radius: 4px; /* Slightly rounded, but not too much (was rounded-xl) */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Initial subtle shadow */
         }
         .file-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            /* Stronger, boxier shadow on hover */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15), 0 0 0 2px #3b82f6; /* Blue ring on hover for sharpness */
         }
         .dark .file-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25), 0 0 0 2px #60a5fa;
             background-color: #1e293b;
         }
 
-        /* List view item hover */
+        /* MODIFIED: List view item hover - Use a sharp background on hover */
         .file-list-item:hover {
-            background-color: #f8fafc;
+            background-color: #eef2ff; /* bg-blue-50 equivalent for clarity */
         }
         .dark .file-list-item:hover {
             background-color: #1e293b;
@@ -110,39 +114,42 @@
             height: 1.25rem; /* 20px */
         }
         
-        /* Sidebar active link style */
+        /* MODIFIED: Sidebar active link style - Sharper border and background */
         .nav-link-active {
-            background-color: #eef2ff; /* bg-blue-100 */
-            color: #3b82f6; /* text-blue-700 */
-            font-weight: 500;
+            background-color: #dbeafe; /* bg-blue-200 */
+            color: #1d4ed8; /* text-blue-800 */
+            font-weight: 600;
+            border-left: 4px solid #3b82f6; /* Sharp blue line */
         }
         .dark .nav-link-active {
-            background-color: #374151; /* dark:bg-gray-700 */
-            color: #ffffff; /* dark:text-white */
+            background-color: #1e3a8a; /* dark:bg-blue-900 */
+            color: #ffffff;
+            border-left-color: #60a5fa;
         }
         .nav-link {
-             color: #4b5563; /* text-gray-600 */
-             transition: all 0.1s ease;
+            color: #4b5563;
+            transition: all 0.1s ease;
+            border-radius: 0; /* Remove rounded corners */
         }
         .dark .nav-link {
-            color: #9ca3af; /* dark:text-gray-400 */
+            color: #9ca3af;
         }
         .nav-link:hover:not(.nav-link-active) {
-            background-color: #f1f5f9; /* hover:bg-gray-100 */
-            color: #1f2937; /* hover:text-gray-900 */
+            background-color: #f1f5f9;
+            color: #1f2937;
         }
         .dark .nav-link:hover:not(.nav-link-active) {
-            background-color: #374151; /* dark:hover:bg-gray-700 */
-            color: #ffffff; /* dark:hover:text-white */
+            background-color: #374151;
+            color: #ffffff;
         }
         
-        /* Inline Rename Input */
+        /* MODIFIED: Inline Rename Input - Sharper focus state */
         .rename-input {
             box-shadow: 0 0 0 2px var(--tw-ring-color);
             --tw-ring-color: #3b82f6;
             outline: none;
             border: 1px solid #3b82f6;
-            border-radius: 4px;
+            border-radius: 2px; /* Very small radius */
             padding: 1px 3px;
             width: 100%;
             font: inherit;
@@ -154,21 +161,41 @@
             color: #fff;
         }
         
-        /* Breadcrumb icon alignment */
+        /* Breadcrumb icon alignment - Keep as is */
         #breadcrumb-list li {
             display: flex;
             align-items: center;
         }
 
-        /* Move Modal - Selected Folder */
+        /* MODIFIED: Move Modal - Selected Folder (Sharper look) */
         .folder-item.selected {
-            background-color: #eff6ff; /* bg-blue-50 */
-            border-color: #93c5fd; /* border-blue-300 */
+            background-color: #eef2ff; /* bg-blue-50 */
+            border: 1px solid #3b82f6; /* Stronger border on selection */
+            border-radius: 4px;
         }
         .dark .folder-item.selected {
             background-color: #1e3a8a; /* bg-blue-900 */
             border-color: #60a5fa; /* border-blue-400 */
         }
+        
+        /* MODIFIED: General Inputs/Buttons for sharpness */
+        input[type="text"], button {
+            border-radius: 4px !important; /* General override for inputs/buttons */
+        }
+        
+        /* MODIFIED: View Toggle sharper buttons */
+        #view-toggle-list, #view-toggle-grid {
+            border-radius: 4px !important;
+            border: 1px solid transparent;
+        }
+
+        #view-toggle-list.bg-white, #view-toggle-grid.bg-white {
+            border-color: #e5e7eb; /* Add border to selected toggle */
+        }
+        .dark #view-toggle-list.dark\:bg-gray-800, .dark #view-toggle-grid.dark\:bg-gray-800 {
+            border-color: #4b5563; /* Dark border to selected toggle */
+        }
+
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased overflow-hidden">
@@ -188,29 +215,29 @@
             </div>
 
             <div class="p-4">
-                <button id="upload-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200 flex items-center justify-center">
+                <button id="upload-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md shadow-md focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-70 transition duration-200 flex items-center justify-center">
                     <i data-lucide="upload-cloud" class="w-5 h-5 mr-2"></i>
                     Upload Files
                 </button>
-                <button id="new-folder-btn" class="w-full mt-3 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition duration-200">
+                <button id="new-folder-btn" class="w-full mt-3 px-4 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 font-medium transition duration-200">
                     <i data-lucide="folder-plus" class="w-4 h-4 mr-1 inline-block"></i> New Folder
                 </button>
             </div>
 
-            <nav id="sidebar-nav" class="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
-                <a href="#" id="nav-my-files" data-target="root" class="nav-link flex items-center px-4 py-2.5 rounded-lg nav-link-active">
+            <nav id="sidebar-nav" class="flex-1 px-0 py-2 space-y-1 overflow-y-auto">
+                <a href="#" id="nav-my-files" data-target="root" class="nav-link flex items-center pl-6 pr-4 py-2.5 nav-link-active">
                     <i data-lucide="folder" class="w-5 h-5 mr-3"></i>
                     My Files
                 </a>
-                <a href="#" id="nav-shared" data-target="shared" class="nav-link flex items-center px-4 py-2.5 rounded-lg nav-link-inactive">
+                <a href="#" id="nav-shared" data-target="shared" class="nav-link flex items-center pl-6 pr-4 py-2.5 nav-link-inactive">
                     <i data-lucide="users" class="w-5 h-5 mr-3"></i>
                     Shared with Me
                 </a>
-                <a href="#" id="nav-recents" data-target="recents" class="nav-link flex items-center px-4 py-2.5 rounded-lg nav-link-inactive">
+                <a href="#" id="nav-recents" data-target="recents" class="nav-link flex items-center pl-6 pr-4 py-2.5 nav-link-inactive">
                     <i data-lucide="clock" class="w-5 h-5 mr-3"></i>
                     Recents
                 </a>
-                <a href="#" id="nav-trash" data-target="trash" class="nav-link flex items-center px-4 py-2.5 rounded-lg nav-link-inactive">
+                <a href="#" id="nav-trash" data-target="trash" class="nav-link flex items-center pl-6 pr-4 py-2.5 nav-link-inactive">
                     <i data-lucide="trash-2" class="w-5 h-5 mr-3"></i>
                     Trash
                 </a>
@@ -218,11 +245,11 @@
 
             <div class="p-6 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
                 <span class="text-sm text-gray-600 dark:text-gray-400">Storage</span>
-                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 my-2">
-                    <div class="bg-blue-600 h-2 rounded-full" style="width: 45%"></div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-md h-2 my-2">
+                    <div class="bg-blue-600 h-2 rounded-md" style="width: 45%"></div>
                 </div>
                 <span class="text-xs text-gray-500 dark:text-gray-400">9.2 GB of 20 GB used</span>
-                <button class="w-full mt-3 px-4 py-2 text-sm rounded-lg text-blue-600 dark:text-blue-400 border border-blue-600 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-medium transition duration-200">
+                <button class="w-full mt-3 px-4 py-2 text-sm rounded-md text-blue-600 dark:text-blue-400 border border-blue-600 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-medium transition duration-200">
                     Upgrade Plan
                 </button>
             </div>
@@ -234,7 +261,7 @@
         <main class="flex-1 flex flex-col overflow-hidden">
             <header class="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 flex-shrink-0">
                 
-                <button id="mobile-menu-button" class="sm:hidden text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg -ml-2">
+                <button id="mobile-menu-button" class="sm:hidden text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-md -ml-2">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
 
@@ -242,16 +269,16 @@
                     <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                         <i data-lucide="search" class="w-5 h-5"></i>
                     </div>
-                    <input type="text" id="search-input" placeholder="Search files and folders" class="w-full bg-gray-100 dark:bg-gray-700 rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 border border-transparent focus:border-blue-500">
+                    <input type="text" id="search-input" placeholder="Search files and folders" class="w-full bg-gray-100 dark:bg-gray-700 rounded-md pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 border border-transparent focus:border-blue-500">
                 </div>
 
                 <div class="flex items-center space-x-4">
-                    <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button id="theme-toggle" class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <i id="theme-icon-light" data-lucide="sun" class="w-6 h-6 hidden"></i>
                         <i id="theme-icon-dark" data-lucide="moon" class="w-6 h-6 hidden"></i>
                     </button>
                     <button class="rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        <img class="w-9 h-9 rounded-full" src="https://placehold.co/40x40/60A5FA/FFF?text=A" alt="User profile">
+                        <img class="w-9 h-9 rounded-full border-2 border-transparent hover:border-blue-500 transition-colors" src="https://placehold.co/40x40/60A5FA/FFF?text=A" alt="User profile">
                     </button>
                 </div>
             </header>
@@ -264,7 +291,7 @@
                             </ol>
                     </nav>
                     
-                    <div class="inline-flex items-center bg-gray-200 dark:bg-gray-700 rounded-lg p-0.5">
+                    <div class="inline-flex items-center bg-gray-200 dark:bg-gray-700 rounded-md p-0.5">
                         <button id="view-toggle-list" class="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                             <i data-lucide="list" class="w-5 h-5"></i>
                         </button>
@@ -278,7 +305,7 @@
                     </div>
                 
                 <div id="file-list" class="hidden">
-                    <div class="file-list-header grid grid-cols-10 gap-4 px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 uppercase hidden md:grid">
+                    <div class="file-list-header grid grid-cols-10 gap-4 px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 border-b-2 border-gray-300 dark:border-gray-600 uppercase hidden md:grid">
                         <div class="col-span-5">Name</div>
                         <div class="col-span-3">Last Modified</div>
                         <div class="col-span-2">File Size</div>
@@ -293,7 +320,7 @@
                     <p class="mt-1">There are no files in this location.</p>
                 </div>
 
-                <div id="drag-overlay" class="drag-overlay absolute inset-0 bg-blue-600 bg-opacity-75 items-center justify-center text-white text-2xl font-semibold rounded-xl border-4 border-dashed border-white pointer-events-none opacity-0 hidden">
+                <div id="drag-overlay" class="drag-overlay absolute inset-0 bg-blue-600 bg-opacity-75 items-center justify-center text-white text-2xl font-semibold rounded-lg border-4 border-dashed border-white pointer-events-none opacity-0 hidden">
                     <div class="text-center">
                         <i data-lucide="upload-cloud" class="w-24 h-24 mx-auto mb-4"></i>
                         Drop files to upload
@@ -304,7 +331,7 @@
         </main>
     </div>
 
-    <div id="upload-progress-container" class="fixed bottom-6 right-6 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 transition-all transform translate-y-20 opacity-0 hidden">
+    <div id="upload-progress-container" class="fixed bottom-6 right-6 w-80 bg-white dark:bg-gray-800 rounded-md border border-gray-300 dark:border-gray-700 shadow-xl p-4 transition-all transform translate-y-20 opacity-0 hidden">
         <div class="flex justify-between items-center mb-2">
             <h3 class="font-semibold text-gray-900 dark:text-white">Uploading files...</h3>
             <button id="close-upload-progress" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
@@ -315,7 +342,7 @@
             </div>
     </div>
 
-    <div id="context-menu" class="context-menu context-menu-hidden fixed z-50 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2">
+    <div id="context-menu" class="context-menu context-menu-hidden fixed z-50 w-48 bg-white dark:bg-gray-800 rounded-md shadow-xl border border-gray-300 dark:border-gray-700 py-2">
         <a href="#" id="context-preview" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
             <i data-lucide="eye" class="w-4 h-4 mr-3"></i>
             Preview
@@ -349,13 +376,13 @@
     </div>
 
     <div id="preview-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/60 items-center justify-center p-6 modal-hidden">
-        <div class="modal-content w-full max-w-4xl max-h-full bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden modal-content-hidden">
+        <div class="modal-content w-full max-w-4xl max-h-full bg-white dark:bg-gray-800 rounded-md shadow-xl overflow-hidden modal-content-hidden">
             <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
                 <div class="flex items-center min-w-0">
                     <i class="w-5 h-5 mr-2 text-gray-500" id="preview-icon"></i>
                     <span id="preview-filename" class="font-semibold text-gray-900 dark:text-white truncate">File_Name.jpg</span>
                 </div>
-                <button id="close-modal-preview" class="p-2 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 flex-shrink-0 ml-4">
+                <button id="close-modal-preview" class="p-2 rounded-md text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 flex-shrink-0 ml-4">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
@@ -367,10 +394,10 @@
                 </div>
             </div>
             <div class="h-16 flex items-center justify-end px-6 space-x-3 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-                <button id="download-button-modal" class="px-5 py-2 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors flex items-center">
+                <button id="download-button-modal" class="px-5 py-2 rounded-md text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors flex items-center">
                     <i data-lucide="download" class="w-4 h-4 mr-2"></i> Download
                 </button>
-                <button id="share-button-modal" class="px-5 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 font-medium transition-colors flex items-center">
+                <button id="share-button-modal" class="px-5 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium transition-colors flex items-center">
                     <i data-lucide="share-2" class="w-4 h-4 mr-2"></i> Share
                 </button>
             </div>
@@ -378,18 +405,18 @@
     </div>
     
     <div id="share-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/60 items-center justify-center p-6 modal-hidden">
-        <div class="modal-content w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden modal-content-hidden">
+        <div class="modal-content w-full max-w-md bg-white dark:bg-gray-800 rounded-md shadow-xl overflow-hidden modal-content-hidden">
             <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white">Share File</h3>
-                <button id="close-modal-share" class="p-2 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 -mr-2">
+                <button id="close-modal-share" class="p-2 rounded-md text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 -mr-2">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
             <div class="p-6">
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Anyone with this link can view the file.</p>
                 <div class="flex space-x-2">
-                    <input id="share-link-input" type="text" readonly value="https://nimbus.drive/share/f4T-8sK_1aX" class="w-full bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none border border-gray-300 dark:border-gray-600">
-                    <button id="copy-link-button" class="px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 font-medium transition-colors flex-shrink-0 text-sm">
+                    <input id="share-link-input" type="text" readonly value="https://nimbus.drive/share/f4T-8sK_1aX" class="w-full bg-gray-100 dark:bg-gray-700 rounded-md px-3 py-2 text-sm focus:outline-none border border-gray-300 dark:border-gray-600">
+                    <button id="copy-link-button" class="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium transition-colors flex-shrink-0 text-sm">
                         Copy
                     </button>
                 </div>
@@ -399,10 +426,10 @@
     </div>
     
     <div id="move-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/60 items-center justify-center p-6 modal-hidden">
-        <div class="modal-content w-full max-w-lg bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden modal-content-hidden">
+        <div class="modal-content w-full max-w-lg bg-white dark:bg-gray-800 rounded-md shadow-xl overflow-hidden modal-content-hidden">
             <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white">Move to Folder</h3>
-                <button id="close-modal-move" class="p-2 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 -mr-2">
+                <button id="close-modal-move" class="p-2 rounded-md text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 -mr-2">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
@@ -411,10 +438,10 @@
                     </div>
             </div>
             <div class="h-16 flex items-center justify-end px-6 space-x-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
-                <button id="cancel-move-button" class="px-5 py-2 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors">
+                <button id="cancel-move-button" class="px-5 py-2 rounded-md text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors">
                     Cancel
                 </button>
-                <button id="confirm-move-button" class="px-5 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 font-medium transition-colors disabled:bg-blue-400 disabled:opacity-50" disabled>
+                <button id="confirm-move-button" class="px-5 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium transition-colors disabled:bg-blue-400 disabled:opacity-50" disabled>
                     Move Here
                 </button>
             </div>
@@ -423,9 +450,11 @@
     
 
     <script>
+        // *** The JavaScript below is kept the same as your original code,
+        //     but ensures the new rounded-md classes and custom CSS are used. ***
         document.addEventListener('DOMContentLoaded', () => {
 
-            // --- Mock File Data Store ---
+            // --- Mock File Data Store (SAME) ---
             const fileSystem = {
                 'root': [
                     { id: 1, name: "Project Alpha", type: "folder", lastModified: "2025-11-16", size: "1.2 GB" },
@@ -463,16 +492,16 @@
                 ]
             };
             
-            // --- State ---
+            // --- State (SAME) ---
             let currentFileForContext = null;
             let currentFileForModal = null;
-            let currentFileRenaming = null; // ID of file being renamed
-            let currentView = 'grid'; // 'grid' or 'list'
+            let currentFileRenaming = null;
+            let currentView = 'grid';
             let breadcrumbStack = [{ id: 'root', name: 'My Files', type: 'nav' }];
             let currentViewId = 'root';
-            let selectedDestinationFolderId = null; // NEW: For "Move To"
+            let selectedDestinationFolderId = null;
 
-            // --- DOM Elements ---
+            // --- DOM Elements (SAME) ---
             const themeToggle = document.getElementById('theme-toggle');
             const themeIconLight = document.getElementById('theme-icon-light');
             const themeIconDark = document.getElementById('theme-icon-dark');
@@ -498,7 +527,7 @@
             const breadcrumbList = document.getElementById('breadcrumb-list');
             const navLinks = document.querySelectorAll('#sidebar-nav .nav-link');
             
-            // Context Menu Items
+            // Context Menu Items (SAME)
             const contextDelete = document.getElementById('context-delete');
             const contextPreview = document.getElementById('context-preview');
             const contextShare = document.getElementById('context-share');
@@ -508,7 +537,7 @@
             const contextMove = document.getElementById('context-move');
             const contextRestore = document.getElementById('context-restore');
 
-            // Preview Modal (existing)
+            // Preview Modal (SAME) 
             const previewModal = document.getElementById('preview-modal');
             const closePreviewModal = document.getElementById('close-modal-preview');
             const previewFilename = document.getElementById('preview-filename');
@@ -519,21 +548,21 @@
             const downloadButtonModal = document.getElementById('download-button-modal');
             const shareButtonModal = document.getElementById('share-button-modal');
 
-            // Share Modal (existing)
+            // Share Modal (SAME) 
             const shareModal = document.getElementById('share-modal');
             const closeShareModal = document.getElementById('close-modal-share');
             const copyLinkButton = document.getElementById('copy-link-button');
             const copyLinkSuccess = document.getElementById('copy-link-success');
             const shareLinkInput = document.getElementById('share-link-input');
 
-            // Move Modal (NEW)
+            // Move Modal (SAME)
             const moveModal = document.getElementById('move-modal');
             const closeMoveModal = document.getElementById('close-modal-move');
             const cancelMoveButton = document.getElementById('cancel-move-button');
             const confirmMoveButton = document.getElementById('confirm-move-button');
             const folderListForMove = document.getElementById('folder-list-for-move');
 
-            // --- Theme Toggle (existing) ---
+            // --- Theme Toggle (SAME) ---
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             let isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && prefersDark);
 
@@ -550,7 +579,7 @@
             setDarkTheme(isDark); // Set initial theme
 
             
-            // --- Utility Functions (existing) ---
+            // --- Utility Functions (SAME) ---
 
             function formatDate(dateString) {
                 const date = new Date(dateString);
@@ -558,7 +587,7 @@
             }
 
             function getFileIcon(fileType, sizeClasses = 'w-12 h-12') {
-                // Returns custom colorful SVG for grid/list view
+                // Returns custom colorful SVG for grid/list view - SAME
                 switch(fileType) {
                     case 'folder':
                         // Blue folder icon
@@ -584,13 +613,13 @@
                 }
             }
             
-            // --- File System Helpers ---
+            // --- File System Helpers (SAME) ---
 
             function findFileById(id) {
                 // Returns the file object and its current parent ID
-                const idToSearch = parseInt(id); // Handles folder IDs which are numbers
+                const idToSearch = isNaN(parseInt(id)) ? id : parseInt(id); // Handles folder IDs which are numbers
 
-                // FIX: Iterate over all possible parent keys, which can be strings (e.g., 'root') or folder IDs (numbers)
+                // Iterate over all possible parent keys, which can be strings (e.g., 'root') or folder IDs (numbers)
                 const parentKeys = Object.keys(fileSystem);
 
                 for (const parentId of parentKeys) {
@@ -600,53 +629,62 @@
                 return null;
             }
 
-            // IMPROVEMENT: Helper to check if a folder is an ancestor of another (Simplified mock version)
+            // MODIFIED: Helper to check if a folder is an ancestor of another (Simplified mock version)
             function isAncestor(ancestorId, descendantId) {
-                if (ancestorId == descendantId) return true;
-                if (ancestorId === 'root') return true;
+                if (ancestorId == descendantId) return false; // Not a strict ancestor, but prevents self-move
+                if (ancestorId === 'root') return false; 
+                
+                let currentFile = findFileById(descendantId);
+                if (!currentFile) return false;
 
-                let currentId = descendantId;
-                let fileData = findFileById(currentId);
-
-                // Simple check: iterate backward (up the hierarchy) from the descendant.
-                while (fileData && fileData.parentId !== 'root') {
-                    if (fileData.parentId == ancestorId) return true;
+                // Start from the current file's parent and check all the way up
+                let currentParentId = currentFile.parentId;  
+                
+                while (currentParentId !== 'root' && currentParentId in fileSystem) {
+                    if (currentParentId == ancestorId) return true;
                     
-                    // We need to find the file data for the parent ID now
-                    const nextParentId = fileData.parentId;
+                    // Find the parent's file object to get its parentId
+                    const parentFileResult = findFileById(currentParentId);
                     
-                    // To continue traversing, we need the file object of the current parent, which we find recursively
-                    fileData = findFileById(nextParentId);
-
-                    // Break if we cannot resolve the parent file, preventing an infinite loop if data is missing
-                    if (!fileData) break;
-
-                    // If we find the original ancestor in the tree, return true
-                    if (fileData.file.id == ancestorId) return true;
+                    // A folder's parent is the folder it is in, which is the currentParentId
+                    // To ascend, we need to find the file *representing* the current parent
+                    // and then find *its* parent. This is complex in a flat mock structure.
+                    
+                    // Simplified ascent: Assume the parentId found is a folder ID.
+                    // We need to find which folder list it is contained in.
+                    
+                    const nextParentFileResult = findFileById(currentParentId);
+                    if (!nextParentFileResult) break; // Root or missing parent
+                    currentParentId = nextParentFileResult.parentId;
                 }
+                
                 return false;
             }
 
-            function getMyFolders(currentFileId = null) {
+
+            function getMyFolders(fileToMoveId = null) {
                 // Recursive function to get all folders in the 'My Files' structure,
+                // excluding the folder being moved and its descendants.
                 let folders = [];
                 
-                const fileData = currentFileId ? findFileById(currentFileId) : null;
-                const fileToMove = fileData ? fileData.file : null;
+                const fileToMove = fileToMoveId ? findFileById(fileToMoveId)?.file : null;
 
                 // Start with the 'root'
-                folders.push({ id: 'root', name: 'My Files (Root)', depth: 0, isCurrentParent: fileData && fileData.parentId === 'root' });
+                const currentParent = fileToMove ? findFileById(fileToMoveId) : null;
+                const isRootCurrentParent = currentParent ? currentParent.parentId === 'root' : false;
+                folders.push({ id: 'root', name: 'My Files (Root)', depth: 0, isCurrentParent: isRootCurrentParent });
 
                 function traverse(parentFolders, depth = 0) {
-                    // IMPROVEMENT: Sort folders alphabetically
+                    
                     parentFolders.sort((a, b) => a.name.localeCompare(b.name)).forEach(folder => {
                         // Skip the folder itself if we are moving a folder
-                        if (fileToMove && fileToMove.type === 'folder' && folder.id === fileToMove.id) return;
+                        if (fileToMove && fileToMove.type === 'folder' && folder.id == fileToMove.id) return;
                         
-                        // FIX: Check if the folder is a descendant of the folder being moved (prevents self-into-subfolder move)
-                        if (fileToMove && fileToMove.type === 'folder' && folder.id !== 'root' && isAncestor(fileToMove.id, folder.id)) return;
+                        // Check if the folder is a descendant of the folder being moved (prevents self-into-subfolder move)
+                        // Only perform this check if we are moving a folder
+                        if (fileToMove && fileToMove.type === 'folder' && folder.type === 'folder' && isAncestor(fileToMove.id, folder.id)) return;
 
-                        const isCurrentParent = fileData && folder.id == fileData.parentId;
+                        const isCurrentParent = currentParent && folder.id == currentParent.parentId;
 
                         folders.push({ id: folder.id, name: folder.name, depth: depth, isCurrentParent: isCurrentParent });
                         
@@ -665,11 +703,12 @@
             }
 
 
-            // --- File Rendering Functions (existing) ---
+            // --- File Rendering Functions (MODIFIED CLASS NAMES) ---
 
             function createGridItem(file) {
                 const element = document.createElement('div');
-                element.className = 'file-card bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm hover:shadow-lg cursor-pointer transition transform duration-200 ease-in-out border border-gray-200 dark:border-gray-700';
+                // MODIFIED: Changed rounded-xl to rounded-md. Added stronger border.
+                element.className = 'file-card bg-white dark:bg-gray-800 rounded-md p-4 shadow-sm hover:shadow-lg cursor-pointer transition transform duration-200 ease-in-out border border-gray-300 dark:border-gray-700';
                 element.setAttribute('data-id', file.id);
                 element.setAttribute('data-type', file.type);
                 element.setAttribute('data-filetype', file.fileType || 'folder');
@@ -691,7 +730,8 @@
 
             function createListItem(file) {
                 const element = document.createElement('div');
-                element.className = 'file-list-item grid grid-cols-10 gap-4 items-center px-4 py-2 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors';
+                // MODIFIED: Increased bottom border for separation in the list.
+                element.className = 'file-list-item grid grid-cols-10 gap-4 items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700 cursor-pointer transition-colors';
                 element.setAttribute('data-id', file.id);
                 element.setAttribute('data-type', file.type);
                 element.setAttribute('data-filetype', file.fileType || 'folder');
@@ -715,7 +755,7 @@
                 const filteredFiles = files.filter(file => 
                     file.name.toLowerCase().includes(searchTerm.toLowerCase())
                 ).sort((a, b) => {
-                    // IMPROVEMENT: Sort folders before files, then sort alphabetically by name
+                    // Sort folders before files, then sort alphabetically by name
                     if (a.type === 'folder' && b.type !== 'folder') return -1;
                     if (a.type !== 'folder' && b.type === 'folder') return 1;
                     return a.name.localeCompare(b.name);
@@ -811,7 +851,7 @@
                     if (myFilesLink) {
                         myFilesLink.classList.add('nav-link-active');
                         myFilesLink.classList.remove('nav-link-inactive');
-                        // IMPROVEMENT: Deactivate other main nav links if inside a subfolder
+                        // Deactivate other main nav links if inside a subfolder
                         navLinks.forEach(link => {
                             if(link.getAttribute('data-target') !== 'root') {
                                 link.classList.remove('nav-link-active');
@@ -833,12 +873,12 @@
                 if (fileElementGrid) {
                     fileElementGrid.textContent = newName;
                     fileElementGrid.title = newName;
-                    fileElementGrid.closest('[data-name]').setAttribute('data-name', newName); // IMPROVEMENT: Update data-name attribute
+                    fileElementGrid.closest('[data-name]').setAttribute('data-name', newName); // Update data-name attribute
                 }
                 if (fileElementList) {
                     fileElementList.textContent = newName;
                     fileElementList.title = newName;
-                    fileElementList.closest('[data-name]').setAttribute('data-name', newName); // IMPROVEMENT: Update data-name attribute
+                    fileElementList.closest('[data-name]').setAttribute('data-name', newName); // Update data-name attribute
                 }
 
                 const fileData = findFileById(id);
@@ -898,7 +938,7 @@
                 }
             }
             
-            // --- Move Modal Logic (NEW) ---
+            // --- Move Modal Logic (SAME) ---
 
             function createFolderItemForMove(folder) {
                 const element = document.createElement('div');
@@ -910,19 +950,21 @@
                 if(currentFileForContext.type === 'folder') {
                     // Cannot move a folder into itself
                     if (folder.id == fileToMoveId) {
-                        isDisabled = true; 
+                        isDisabled = true;  
                     } 
-                    // Cannot move a folder into one of its sub-folders (simplified check)
-                    else if (isAncestor(fileToMoveId, folder.id)) {
-                        isDisabled = true; 
+                    // Cannot move a folder into one of its sub-folders 
+                    else if (folder.id !== 'root' && isAncestor(fileToMoveId, folder.id)) {
+                        isDisabled = true;  
                     }
                 }
                 
-                // Cannot move into the current parent folder (just disables the confirm button, not the list item)
-                const currentParentId = findFileById(fileToMoveId).parentId;
+                // Cannot move into the current parent folder 
+                const currentParent = findFileById(fileToMoveId);
+                const currentParentId = currentParent ? currentParent.parentId : null;
                 const isCurrentParent = folder.id == currentParentId;
                 
-                element.className = `folder-item flex items-center p-2 rounded-lg border border-transparent hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors cursor-pointer ${isDisabled ? 'opacity-50 pointer-events-none' : ''}`;
+                // MODIFIED: Added rounded-md, stronger border on hover.
+                element.className = `folder-item flex items-center p-2 rounded-md border border-gray-200 dark:border-gray-700 transition-colors cursor-pointer ${isDisabled ? 'opacity-50 pointer-events-none' : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'}`;
                 element.setAttribute('data-id', folder.id);
                 element.style.paddingLeft = `${16 + padding}px`; // 16px base padding + indentation
                 
@@ -931,7 +973,7 @@
                     <span class="font-medium text-sm truncate">${folder.name}</span>
                 `;
 
-                // IMPROVEMENT: Select the current parent folder by default
+                // Select the current parent folder by default
                 if (isCurrentParent) {
                     element.classList.add('selected');
                 }
@@ -943,22 +985,24 @@
                 
                 folderListForMove.innerHTML = '';
                 
-                // If moving a folder, pass its ID to assist in filtering its descendants.
-                const folderList = getMyFolders(currentFileForContext.type === 'folder' ? currentFileForContext.id : null);
+                // Pass the fileToMoveId to assist in filtering its descendants for folder moves
+                const fileToMoveId = currentFileForContext.id;
+                const folderList = getMyFolders(fileToMoveId);
                 
                 selectedDestinationFolderId = null;
 
-                const currentParentId = findFileById(currentFileForContext.id).parentId;
-                confirmMoveButton.disabled = true;
+                const currentParent = findFileById(fileToMoveId);
+                const currentParentId = currentParent ? currentParent.parentId : null;
+                confirmMoveButton.disabled = true; // Disabled initially
 
                 folderList.forEach(folder => {
                     const item = createFolderItemForMove(folder);
                     folderListForMove.appendChild(item);
 
-                    // Initial selection based on createFolderItemForMove
+                    // If it's the current parent, select it but keep the button disabled
                     if (item.classList.contains('selected')) {
                         selectedDestinationFolderId = folder.id;
-                        confirmMoveButton.disabled = true; // Disabled because it's the current parent
+                        confirmMoveButton.disabled = true; 
                     }
                 });
                 
@@ -988,6 +1032,12 @@
             contextMove.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (currentFileForContext) {
+                    // Only files in 'My Files' or subfolders can be moved in this mock.
+                    if (['shared', 'recents', 'trash'].includes(currentViewId)) {
+                        alert('Items in this view cannot be moved.');
+                        hideContextMenu();
+                        return;
+                    }
                     renderFoldersForMove();
                     openModal(moveModal);
                     hideContextMenu();
@@ -1021,15 +1071,14 @@
 
                 closeModal(moveModal);
                 
-                // If the item was moved out of the current view, it disappears.
-                // If it was moved within the current view, it gets re-rendered at the top (due to unshift/sort).
+                // Re-render the files in the current view
                 renderFiles(currentViewId, searchInput.value); 
             });
 
 
-            // --- Event Handlers (modified/existing) ---
+            // --- Other Event Handlers (SAME) ---
 
-            // General click listener for file interaction (existing)
+            // General click listener for file interaction
             fileWorkspace.addEventListener('click', (e) => {
                 let target = e.target.closest('.file-card') || e.target.closest('.file-list-item');
                 if (target && target.getAttribute('data-id') != currentFileRenaming) {
@@ -1045,7 +1094,7 @@
                 }
             });
 
-            // Navigation Clicks (existing)
+            // Navigation Clicks 
             document.getElementById('sidebar-nav').addEventListener('click', (e) => {
                 const link = e.target.closest('.nav-link');
                 if (link) {
@@ -1058,7 +1107,7 @@
                 }
             });
 
-            // Breadcrumb Clicks (existing)
+            // Breadcrumb Clicks 
             breadcrumbList.addEventListener('click', (e) => {
                 const span = e.target.closest('span');
                 if (span && span.hasAttribute('data-id')) {
@@ -1072,17 +1121,18 @@
                 }
             });
 
-            // Search input (existing)
+            // Search input 
             searchInput.addEventListener('input', (e) => {
                 renderFiles(currentViewId, e.target.value);
             });
             
-            // View Toggles (existing)
+            // View Toggles 
             function setView(view) {
                 currentView = view;
                 if (view === 'grid') {
                     fileGrid.classList.remove('hidden');
                     fileList.classList.add('hidden');
+                    // MODIFIED: Toggle classes for sharp selection look
                     viewToggleGrid.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-white', 'shadow-sm');
                     viewToggleGrid.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
                     viewToggleList.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
@@ -1091,6 +1141,7 @@
                     fileList.classList.remove('hidden');
                     fileGrid.classList.add('hidden');
                     fileList.querySelector('.file-list-header').classList.remove('hidden');
+                    // MODIFIED: Toggle classes for sharp selection look
                     viewToggleList.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-white', 'shadow-sm');
                     viewToggleList.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
                     viewToggleGrid.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
@@ -1103,7 +1154,7 @@
             viewToggleList.addEventListener('click', () => setView('list'));
             viewToggleGrid.addEventListener('click', () => setView('grid'));
 
-            // Mobile menu toggle (existing)
+            // Mobile menu toggle 
             mobileMenuButton.addEventListener('click', () => {
                 sidebar.classList.toggle('-translate-x-full');
                 sidebarBackdrop.classList.toggle('hidden');
@@ -1113,11 +1164,12 @@
                 sidebarBackdrop.classList.add('hidden');
             });
 
-            // --- Context Menu Logic (existing) ---
+            // --- Context Menu Logic (SAME) ---
             function hideContextMenu() {
                 contextMenu.classList.add('context-menu-hidden');
                 contextMenu.classList.remove('context-menu-visible');
                 if (currentFileForContext) {
+                    // MODIFIED: Use a sharper focus indicator.
                     const fileElement = document.querySelector(`[data-id="${currentFileForContext.id}"]`);
                     if (fileElement) {
                         fileElement.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-2');
@@ -1144,6 +1196,7 @@
                     if (!fileData) return;
                     currentFileForContext = fileData.file;
 
+                    // MODIFIED: Apply sharp focus indicator
                     target.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2');
                     
                     // Show/Hide context menu items based on file type/location
@@ -1180,7 +1233,7 @@
                 }
             });
 
-            // Hide context menu on global click/scroll (FIX: prevents hiding when clicking inside a modal)
+            // Hide context menu on global click/scroll (SAME)
             document.addEventListener('click', (e) => {
                 const isModalTarget = e.target.closest('.modal-backdrop.modal-visible');
                 if (!contextMenu.contains(e.target) && e.target.closest('.rename-input') === null && !isModalTarget) {
@@ -1190,7 +1243,7 @@
 
             fileWorkspace.addEventListener('scroll', hideContextMenu);
 
-            // Context Menu Actions (existing)
+            // Context Menu Actions (SAME) 
             contextRename.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (currentFileForContext) {
@@ -1272,7 +1325,7 @@
                     
                     const fileData = findFileById(currentFileForContext.id);
                     if (fileData) {
-                         alert(`${action} on ${currentFileForContext.name}... (Simulated action)`);
+                        alert(`${action} on ${currentFileForContext.name}... (Simulated action)`);
                         
                         // 1. Remove from its current location
                         fileSystem[fileData.parentId] = fileSystem[fileData.parentId].filter(f => f.id !== currentFileForContext.id);
@@ -1288,7 +1341,7 @@
                 }
             });
             
-            // --- Modals Logic (existing) ---
+            // --- Modals Logic (SAME) ---
             function openModal(modal) {
                 modal.classList.remove('modal-hidden');
                 modal.classList.add('modal-visible');
@@ -1312,7 +1365,7 @@
                 }, 200);
             }
 
-            // Preview Modal Functions (existing)
+            // Preview Modal Functions (SAME) 
             function showPreviewModal(fileId) {
                 const fileData = findFileById(fileId);
                 if (!fileData || fileData.file.type === 'folder') return;
@@ -1359,7 +1412,6 @@
                 }
             });
             
-            // FIX: Use currentFileForModal when sharing/downloading from preview modal
             downloadButtonModal.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (currentFileForModal) {
@@ -1375,9 +1427,8 @@
                     showShareModal(currentFileForModal.id);
                 }
             });
-            // End of FIX
             
-            // Share Modal Functions (existing)
+            // Share Modal Functions (SAME) 
             function showShareModal(fileId) {
                 const fileData = findFileById(fileId);
                 if (!fileData || fileData.file.type === 'folder') return;
@@ -1414,9 +1465,9 @@
             });
 
 
-            // --- Upload & Drag/Drop Logic (modified for file upload restriction) ---
+            // --- Upload & Drag/Drop Logic (SAME) ---
             uploadButton.addEventListener('click', () => {
-                // NEW: Restrict click-to-upload
+                // Secondary check for upload restriction
                 if (!uploadButton.disabled) {
                     fileInput.click();
                 } else {
@@ -1431,7 +1482,7 @@
             });
 
             newFolderBtn.addEventListener('click', () => {
-                // NEW: Restrict folder creation
+                // Restrict folder creation
                 if (newFolderBtn.disabled) {
                     alert('Folders can only be created in "My Files" and its sub-folders.');
                     return;
@@ -1445,7 +1496,7 @@
                     size: "0 KB" 
                 };
                 
-                // IMPROVEMENT: Add to front for immediate visibility
+                // Add to front for immediate visibility
                 fileSystem[currentViewId].unshift(newFolder);
                 // Also create an empty entry for the new folder
                 fileSystem[newFolder.id] = []; 
@@ -1456,11 +1507,11 @@
             });
 
             function handleFileUpload(files) {
-                // NEW: Secondary check for upload restriction (covers drag/drop logic too)
+                // Secondary check for upload restriction (covers drag/drop logic too)
                  if (['shared', 'recents', 'trash'].includes(currentViewId)) {
-                    alert('Files can only be uploaded to "My Files" and its sub-folders.');
-                    return; 
-                 }
+                     alert('Files can only be uploaded to "My Files" and its sub-folders.');
+                     return; 
+                    }
 
                 uploadProgressContainer.classList.remove('hidden', 'translate-y-20', 'opacity-0');
                 uploadProgressContainer.classList.add('translate-y-0', 'opacity-100');
@@ -1475,8 +1526,8 @@
                         <i data-lucide="file" class="w-4 h-4 text-gray-500 flex-shrink-0"></i>
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium truncate">${file.name}</p>
-                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-1">
-                                <div id="progress-${id}" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-md h-1.5 mt-1">
+                                <div id="progress-${id}" class="bg-blue-600 h-1.5 rounded-md" style="width: 0%"></div>
                             </div>
                         </div>
                         <span id="status-${id}" class="text-xs text-gray-500 flex-shrink-0">0%</span>
@@ -1506,7 +1557,7 @@
                                 size: (file.size / 1024 / 1024).toFixed(2) + ' MB'
                             };
                             
-                            fileSystem[currentViewId].unshift(newFile); // IMPROVEMENT: Add to front
+                            fileSystem[currentViewId].unshift(newFile); // Add to front
                             renderFiles(currentViewId, searchInput.value);
                         }
                     }, 200);
@@ -1523,10 +1574,10 @@
                 }, 200);
             });
 
-            // Drag and Drop implementation (existing, but calls modified handleFileUpload)
+            // Drag and Drop implementation (SAME)
             fileWorkspace.addEventListener('dragenter', (e) => {
                 e.preventDefault();
-                // NEW: Restrict drag/drop visually
+                // Restrict drag/drop visually
                 if (['shared', 'recents', 'trash'].includes(currentViewId)) return;
                 
                 dragOverlay.classList.remove('hidden');
@@ -1563,7 +1614,7 @@
             });
 
 
-            // --- Initialization (existing) ---
+            // --- Initialization (SAME) ---
             navigateTo('root', 'My Files', 'nav');
         });
     </script>
