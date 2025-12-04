@@ -4,16 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NimbusDrive - Cloud Storage</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Custom Styles -->
     <style>
         /* Apply Inter font */
         body {
@@ -66,10 +62,12 @@
         .modal-hidden {
             opacity: 0;
             pointer-events: none;
+            display: none; /* Add this to hide the element completely */
         }
         .modal-visible {
             opacity: 1;
             pointer-events: auto;
+            display: flex; /* Display flex when visible */
         }
         .modal-content-hidden {
             opacity: 0;
@@ -86,6 +84,9 @@
         }
         
         /* File card hover effect */
+        .file-card {
+            transition: all 0.2s ease;
+        }
         .file-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -119,11 +120,20 @@
             background-color: #374151; /* dark:bg-gray-700 */
             color: #ffffff; /* dark:text-white */
         }
-        .nav-link-inactive {
-            color: #4b5563; /* text-gray-600 */
+        .nav-link {
+             color: #4b5563; /* text-gray-600 */
+             transition: all 0.1s ease;
         }
-        .dark .nav-link-inactive {
+        .dark .nav-link {
             color: #9ca3af; /* dark:text-gray-400 */
+        }
+        .nav-link:hover:not(.nav-link-active) {
+            background-color: #f1f5f9; /* hover:bg-gray-100 */
+            color: #1f2937; /* hover:text-gray-900 */
+        }
+        .dark .nav-link:hover:not(.nav-link-active) {
+            background-color: #374151; /* dark:hover:bg-gray-700 */
+            color: #ffffff; /* dark:hover:text-white */
         }
         
         /* Inline Rename Input */
@@ -149,19 +159,25 @@
             display: flex;
             align-items: center;
         }
+
+        /* Move Modal - Selected Folder */
+        .folder-item.selected {
+            background-color: #eff6ff; /* bg-blue-50 */
+            border-color: #93c5fd; /* border-blue-300 */
+        }
+        .dark .folder-item.selected {
+            background-color: #1e3a8a; /* bg-blue-900 */
+            border-color: #60a5fa; /* border-blue-400 */
+        }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased overflow-hidden">
 
-    <!-- Hidden file input for upload button -->
     <input type="file" id="file-input" multiple hidden>
 
-    <!-- Main App Container -->
     <div class="flex h-screen">
 
-        <!-- Sidebar -->
         <aside id="sidebar" class="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex-col fixed inset-y-0 left-0 z-30 transform -translate-x-full sm:translate-x-0 sm:static sm:flex transition-transform duration-300 ease-in-out">
-            <!-- Logo -->
             <div class="h-16 flex items-center px-5 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
                 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12.75 6.5C12.75 5.5335 13.5335 4.75 14.5 4.75H23.25C24.2165 4.75 25 5.5335 25 6.5V10.75H12.75V6.5Z" class="text-blue-300 dark:text-blue-400" fill="currentColor"/>
@@ -171,135 +187,112 @@
                 <span class="ml-2.5 font-semibold text-xl text-gray-900 dark:text-white">NimbusDrive</span>
             </div>
 
-            <!-- Upload Button -->
             <div class="p-4">
-                <button id="upload-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-200 flex items-center justify-center">
+                <button id="upload-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200 flex items-center justify-center">
                     <i data-lucide="upload-cloud" class="w-5 h-5 mr-2"></i>
-                    Upload
+                    Upload Files
                 </button>
-                <div class="mt-3">
-                    <button id="new-folder-btn" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg">
-                        + New Folder
-                    </button>
-                </div>
+                <button id="new-folder-btn" class="w-full mt-3 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition duration-200">
+                    <i data-lucide="folder-plus" class="w-4 h-4 mr-1 inline-block"></i> New Folder
+                </button>
             </div>
 
-            <!-- Navigation -->
             <nav id="sidebar-nav" class="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
-                <a href="#" id="nav-my-files" class="nav-link flex items-center px-4 py-2.5 rounded-lg">
+                <a href="#" id="nav-my-files" data-target="root" class="nav-link flex items-center px-4 py-2.5 rounded-lg nav-link-active">
                     <i data-lucide="folder" class="w-5 h-5 mr-3"></i>
                     My Files
                 </a>
-                <a href="#" id="nav-shared" class="nav-link flex items-center px-4 py-2.5 rounded-lg">
+                <a href="#" id="nav-shared" data-target="shared" class="nav-link flex items-center px-4 py-2.5 rounded-lg nav-link-inactive">
                     <i data-lucide="users" class="w-5 h-5 mr-3"></i>
                     Shared with Me
                 </a>
-                <a href="#" id="nav-recents" class="nav-link flex items-center px-4 py-2.5 rounded-lg">
+                <a href="#" id="nav-recents" data-target="recents" class="nav-link flex items-center px-4 py-2.5 rounded-lg nav-link-inactive">
                     <i data-lucide="clock" class="w-5 h-5 mr-3"></i>
                     Recents
                 </a>
-                <a href="#" id="nav-trash" class="nav-link flex items-center px-4 py-2.5 rounded-lg">
+                <a href="#" id="nav-trash" data-target="trash" class="nav-link flex items-center px-4 py-2.5 rounded-lg nav-link-inactive">
                     <i data-lucide="trash-2" class="w-5 h-5 mr-3"></i>
                     Trash
                 </a>
             </nav>
 
-            <!-- Storage Indicator -->
             <div class="p-6 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
                 <span class="text-sm text-gray-600 dark:text-gray-400">Storage</span>
                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 my-2">
                     <div class="bg-blue-600 h-2 rounded-full" style="width: 45%"></div>
                 </div>
                 <span class="text-xs text-gray-500 dark:text-gray-400">9.2 GB of 20 GB used</span>
+                <button class="w-full mt-3 px-4 py-2 text-sm rounded-lg text-blue-600 dark:text-blue-400 border border-blue-600 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-medium transition duration-200">
+                    Upgrade Plan
+                </button>
             </div>
         </aside>
         
-        <!-- Sidebar Backdrop (for mobile) -->
         <div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-20 sm:hidden hidden"></div>
 
 
-        <!-- Main Content -->
         <main class="flex-1 flex flex-col overflow-hidden">
-            <!-- Header -->
             <header class="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 flex-shrink-0">
                 
-                <!-- Mobile Menu Button -->
                 <button id="mobile-menu-button" class="sm:hidden text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg -ml-2">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
 
-                <!-- Search Bar -->
-                <div class="relative w-full max-w-md ml-2 sm:ml-0">
+                <div class="relative w-full max-w-lg mx-auto sm:ml-0">
                     <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                         <i data-lucide="search" class="w-5 h-5"></i>
                     </div>
                     <input type="text" id="search-input" placeholder="Search files and folders" class="w-full bg-gray-100 dark:bg-gray-700 rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 border border-transparent focus:border-blue-500">
                 </div>
 
-                <!-- Header Icons -->
                 <div class="flex items-center space-x-4">
-                    <!-- Theme Toggle -->
                     <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <i id="theme-icon-light" data-lucide="sun" class="w-6 h-6 hidden"></i>
                         <i id="theme-icon-dark" data-lucide="moon" class="w-6 h-6 hidden"></i>
                     </button>
-                    <!-- Profile Dropdown -->
                     <button class="rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         <img class="w-9 h-9 rounded-full" src="https://placehold.co/40x40/60A5FA/FFF?text=A" alt="User profile">
                     </button>
                 </div>
             </header>
 
-            <!-- File Workspace -->
             <div id="file-workspace" class="flex-1 overflow-y-auto p-6 relative">
                 
-                <!-- Workspace Header -->
                 <div class="flex items-center justify-between mb-6">
-                    <!-- Breadcrumbs -->
                     <nav class="flex items-center text-lg font-semibold text-gray-500 dark:text-gray-400" aria-label="Breadcrumb">
                         <ol id="breadcrumb-list" class="flex items-center space-x-2">
-                            <!-- Breadcrumbs injected here -->
-                        </ol>
+                            </ol>
                     </nav>
                     
-                    <!-- View Toggle -->
                     <div class="inline-flex items-center bg-gray-200 dark:bg-gray-700 rounded-lg p-0.5">
-                        <button id="view-toggle-list" class="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors">
+                        <button id="view-toggle-list" class="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                             <i data-lucide="list" class="w-5 h-5"></i>
                         </button>
-                        <button id="view-toggle-grid" class="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors">
+                        <button id="view-toggle-grid" class="p-1.5 rounded-md text-gray-800 dark:text-white bg-white dark:bg-gray-800 shadow-sm transition-colors">
                             <i data-lucide="layout-grid" class="w-5 h-5"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- File/Folder Grid -->
-                <div id="file-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
-                    <!-- File items will be injected here by JavaScript -->
-                </div>
+                <div id="file-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-5">
+                    </div>
                 
-                <!-- File/Folder List -->
                 <div id="file-list" class="hidden">
-                    <!-- Header -->
                     <div class="file-list-header grid grid-cols-10 gap-4 px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 uppercase hidden md:grid">
                         <div class="col-span-5">Name</div>
                         <div class="col-span-3">Last Modified</div>
                         <div class="col-span-2">File Size</div>
                     </div>
-                    <!-- List Body -->
                     <div id="file-list-body">
-                        <!-- File list items will be injected here -->
-                    </div>
+                        </div>
                 </div>
 
-                <!-- Empty State Message -->
                 <div id="empty-state" class="hidden text-center text-gray-500 dark:text-gray-400 py-20">
                     <i data-lucide="folder-search" class="w-24 h-24 mx-auto mb-4 text-gray-400"></i>
                     <h3 class="text-xl font-medium">No files found</h3>
                     <p class="mt-1">There are no files in this location.</p>
                 </div>
 
-                <!-- Drag-and-Drop Overlay -->
                 <div id="drag-overlay" class="drag-overlay absolute inset-0 bg-blue-600 bg-opacity-75 items-center justify-center text-white text-2xl font-semibold rounded-xl border-4 border-dashed border-white pointer-events-none opacity-0 hidden">
                     <div class="text-center">
                         <i data-lucide="upload-cloud" class="w-24 h-24 mx-auto mb-4"></i>
@@ -311,7 +304,6 @@
         </main>
     </div>
 
-    <!-- Upload Progress Pop-up -->
     <div id="upload-progress-container" class="fixed bottom-6 right-6 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 transition-all transform translate-y-20 opacity-0 hidden">
         <div class="flex justify-between items-center mb-2">
             <h3 class="font-semibold text-gray-900 dark:text-white">Uploading files...</h3>
@@ -320,11 +312,9 @@
             </button>
         </div>
         <div id="upload-list" class="space-y-3 max-h-40 overflow-y-auto">
-            <!-- Upload items will be injected here -->
-        </div>
+            </div>
     </div>
 
-    <!-- Context Menu -->
     <div id="context-menu" class="context-menu context-menu-hidden fixed z-50 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2">
         <a href="#" id="context-preview" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
             <i data-lucide="eye" class="w-4 h-4 mr-3"></i>
@@ -358,10 +348,8 @@
         </a>
     </div>
 
-    <!-- File Preview Modal -->
     <div id="preview-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/60 items-center justify-center p-6 modal-hidden">
         <div class="modal-content w-full max-w-4xl max-h-full bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden modal-content-hidden">
-            <!-- Modal Header -->
             <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
                 <div class="flex items-center min-w-0">
                     <i class="w-5 h-5 mr-2 text-gray-500" id="preview-icon"></i>
@@ -371,15 +359,13 @@
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
-            <!-- Modal Content -->
             <div class="p-6 h-[70vh] flex items-center justify-center overflow-auto">
-                <img id="preview-image" src="https://placehold.co/800x600/e2e8f0/94a3b8?text=File+Preview" alt="File preview" class="max-w-full max-h-full object-contain">
+                <img id="preview-image" src="" alt="File preview" class="max-w-full max-h-full object-contain">
                 <div id="preview-other" class="hidden text-center text-gray-500">
                     <i id="preview-other-icon" class="w-24 h-24 mx-auto mb-4"></i>
                     <p class="text-xl">Preview not available for this file type.</p>
                 </div>
             </div>
-            <!-- Modal Footer -->
             <div class="h-16 flex items-center justify-end px-6 space-x-3 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
                 <button id="download-button-modal" class="px-5 py-2 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors flex items-center">
                     <i data-lucide="download" class="w-4 h-4 mr-2"></i> Download
@@ -391,17 +377,14 @@
         </div>
     </div>
     
-    <!-- Share Modal -->
     <div id="share-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/60 items-center justify-center p-6 modal-hidden">
         <div class="modal-content w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden modal-content-hidden">
-            <!-- Modal Header -->
             <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white">Share File</h3>
                 <button id="close-modal-share" class="p-2 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 -mr-2">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
-            <!-- Modal Content -->
             <div class="p-6">
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Anyone with this link can view the file.</p>
                 <div class="flex space-x-2">
@@ -411,6 +394,29 @@
                     </button>
                 </div>
                 <span id="copy-link-success" class="text-green-600 text-sm mt-2 hidden">Link copied to clipboard!</span>
+            </div>
+        </div>
+    </div>
+    
+    <div id="move-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/60 items-center justify-center p-6 modal-hidden">
+        <div class="modal-content w-full max-w-lg bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden modal-content-hidden">
+            <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">Move to Folder</h3>
+                <button id="close-modal-move" class="p-2 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 -mr-2">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="p-6 h-80 overflow-y-auto">
+                <div id="folder-list-for-move" class="space-y-1">
+                    </div>
+            </div>
+            <div class="h-16 flex items-center justify-end px-6 space-x-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
+                <button id="cancel-move-button" class="px-5 py-2 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors">
+                    Cancel
+                </button>
+                <button id="confirm-move-button" class="px-5 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 font-medium transition-colors disabled:bg-blue-400 disabled:opacity-50" disabled>
+                    Move Here
+                </button>
             </div>
         </div>
     </div>
@@ -441,7 +447,7 @@
                     { id: 104, name: "Logo_Final_v3.ai", type: "file", fileType: "image", lastModified: "2025-11-10", size: "15.0 MB" },
                     { id: 105, name: "Brand_Guidelines.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-10", size: "8.2 MB" },
                 ],
-                '9': [], // Empty folder
+                '9': [], // Empty folder (Design System)
                 'shared': [
                     { id: 201, name: "Vendor Contract.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-15", size: "1.1 MB" },
                     { id: 202, name: "Competitor Analysis.pptx", type: "file", fileType: "doc", lastModified: "2025-11-13", size: "10.4 MB" },
@@ -456,13 +462,15 @@
                     { id: 302, name: "temp_image.jpg", type: "file", fileType: "image", lastModified: "2025-10-05", size: "1.1 MB" },
                 ]
             };
-
+            
             // --- State ---
             let currentFileForContext = null;
             let currentFileForModal = null;
             let currentFileRenaming = null; // ID of file being renamed
             let currentView = 'grid'; // 'grid' or 'list'
-            let breadcrumbStack = [{ id: 'root', name: 'My Files' }];
+            let breadcrumbStack = [{ id: 'root', name: 'My Files', type: 'nav' }];
+            let currentViewId = 'root';
+            let selectedDestinationFolderId = null; // NEW: For "Move To"
 
             // --- DOM Elements ---
             const themeToggle = document.getElementById('theme-toggle');
@@ -486,7 +494,9 @@
             const sidebarBackdrop = document.getElementById('sidebar-backdrop');
             const fileInput = document.getElementById('file-input');
             const uploadButton = document.getElementById('upload-button');
+            const newFolderBtn = document.getElementById('new-folder-btn');
             const breadcrumbList = document.getElementById('breadcrumb-list');
+            const navLinks = document.querySelectorAll('#sidebar-nav .nav-link');
             
             // Context Menu Items
             const contextDelete = document.getElementById('context-delete');
@@ -498,10 +508,9 @@
             const contextMove = document.getElementById('context-move');
             const contextRestore = document.getElementById('context-restore');
 
-            // Preview Modal
+            // Preview Modal (existing)
             const previewModal = document.getElementById('preview-modal');
             const closePreviewModal = document.getElementById('close-modal-preview');
-            const previewModalContent = previewModal.querySelector('.modal-content');
             const previewFilename = document.getElementById('preview-filename');
             const previewIcon = document.getElementById('preview-icon');
             const previewImage = document.getElementById('preview-image');
@@ -510,15 +519,21 @@
             const downloadButtonModal = document.getElementById('download-button-modal');
             const shareButtonModal = document.getElementById('share-button-modal');
 
-            // Share Modal
+            // Share Modal (existing)
             const shareModal = document.getElementById('share-modal');
             const closeShareModal = document.getElementById('close-modal-share');
-            const shareModalContent = shareModal.querySelector('.modal-content');
             const copyLinkButton = document.getElementById('copy-link-button');
             const copyLinkSuccess = document.getElementById('copy-link-success');
             const shareLinkInput = document.getElementById('share-link-input');
 
-            // --- Theme Toggle ---
+            // Move Modal (NEW)
+            const moveModal = document.getElementById('move-modal');
+            const closeMoveModal = document.getElementById('close-modal-move');
+            const cancelMoveButton = document.getElementById('cancel-move-button');
+            const confirmMoveButton = document.getElementById('confirm-move-button');
+            const folderListForMove = document.getElementById('folder-list-for-move');
+
+            // --- Theme Toggle (existing) ---
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             let isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && prefersDark);
 
@@ -528,218 +543,658 @@
                 document.documentElement.classList.toggle('dark', dark);
                 themeIconLight.classList.toggle('hidden', !dark);
                 themeIconDark.classList.toggle('hidden', dark);
+                lucide.createIcons();
             }
 
             themeToggle.addEventListener('click', () => setDarkTheme(!isDark));
             setDarkTheme(isDark); // Set initial theme
 
             
-            // --- File Rendering ---
+            // --- Utility Functions (existing) ---
+
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            }
 
             function getFileIcon(fileType, sizeClasses = 'w-12 h-12') {
-                // Returns custom colorful SVG
+                // Returns custom colorful SVG for grid/list view
                 switch(fileType) {
                     case 'folder':
-                        return `<svg class="${sizeClasses}" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 12C5 10.8954 5.89543 10 7 10H18.6364C19.4975 10 20.2974 10.435 20.7861 11.1716L22.5498 13.8284C23.0385 14.565 23.8383 15 24.6994 15H41C42.1046 15 43 15.8954 43 17V36C43 37.1046 42.1046 38 41 38H7C5.89543 38 5 37.1046 5 36V12Z" fill="#60A5FA" stroke="#3B82F6" stroke-width="2" stroke-linejoin="round"/><path d="M5 18C5 16.8954 5.89543 16 7 16H41C42.1046 16 43 16.8954 43 18V36C43 37.1046 42.1046 38 41 38H7C5.89543 38 5 37.1046 5 36V18Z" fill="#3B82F6"/></svg>`;
+                        // Blue folder icon
+                        return `<svg class="${sizeClasses} text-blue-500" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 12C5 10.8954 5.89543 10 7 10H18.6364C19.4975 10 20.2974 10.435 20.7861 11.1716L22.5498 13.8284C23.0385 14.565 23.8383 15 24.6994 15H41C42.1046 15 43 15.8954 43 17V36C43 37.1046 42.1046 38 41 38H7C5.89543 38 5 37.1046 5 36V12Z" fill="currentColor" opacity="0.8" stroke="#3B82F6" stroke-width="2" stroke-linejoin="round"/><path d="M5 18C5 16.8954 5.89543 16 7 16H41C42.1046 16 43 16.8954 43 18V36C43 37.1046 42.1046 38 41 38H7C5.89543 38 5 37.1046 5 36V18Z" fill="currentColor" /></svg>`;
                     case 'pdf':
-                        return `<svg class="${sizeClasses}" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H30L40 14V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="#FEE2E2" stroke="#EF4444" stroke-width="2" stroke-linejoin="round"/><path d="M30 4L40 14H30V4Z" fill="#FCA5A5" stroke="#EF4444" stroke-width="2" stroke-linejoin="round"/><path d="M16 22H32" stroke="#DC2626" stroke-width="2" stroke-linecap="round"/><path d="M16 28H32" stroke="#DC2626" stroke-width="2" stroke-linecap="round"/><path d="M16 34H24" stroke="#DC2626" stroke-width="2" stroke-linecap="round"/></svg>`;
+                        // Red PDF icon
+                        return `<svg class="${sizeClasses} text-red-500" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H30L40 14V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="currentColor" opacity="0.3" stroke="#EF4444" stroke-width="2" stroke-linejoin="round"/><path d="M30 4L40 14H30V4Z" fill="#FCA5A5" stroke="#EF4444" stroke-width="2" stroke-linejoin="round"/><path d="M16 22H32" stroke="#DC2626" stroke-width="2" stroke-linecap="round"/><path d="M16 28H32" stroke="#DC2626" stroke-width="2" stroke-linecap="round"/><path d="M16 34H24" stroke="#DC2626" stroke-width="2" stroke-linecap="round"/></svg>`;
                     case 'image':
-                        return `<svg class="${sizeClasses}" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H38C39.1046 4 40 4.89543 40 6V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="#DCFCE7" stroke="#22C55E" stroke-width="2" stroke-linejoin="round"/><path d="M16 16C17.1046 16 18 15.1046 18 14C18 12.8954 17.1046 12 16 12C14.8954 12 14 12.8954 14 14C14 15.1046 14.8954 16 16 16Z" fill="#16A34A" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 36L22 26L36 38" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 22L32 26" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+                        // Green Image icon
+                        return `<svg class="${sizeClasses} text-green-500" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H38C39.1046 4 40 4.89543 40 6V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="currentColor" opacity="0.3" stroke="#22C55E" stroke-width="2" stroke-linejoin="round"/><circle cx="16" cy="14" r="2" fill="#16A34A" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 36L22 26L36 38" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 22L32 26" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
                     case 'doc':
-                        return `<svg class="${sizeClasses}" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H30L40 14V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="#DBEAFE" stroke="#3B82F6" stroke-width="2" stroke-linejoin="round"/><path d="M30 4L40 14H30V4Z" fill="#BFDBFE" stroke="#3B82F6" stroke-width="2" stroke-linejoin="round"/><path d="M16 22H32" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/><path d="M16 28H32" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/><path d="M16 34H24" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/></svg>`;
+                        // Blue/Indigo Doc icon
+                        return `<svg class="${sizeClasses} text-indigo-500" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H30L40 14V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="currentColor" opacity="0.3" stroke="#6366F1" stroke-width="2" stroke-linejoin="round"/><path d="M30 4L40 14H30V4Z" fill="#818CF8" stroke="#6366F1" stroke-width="2" stroke-linejoin="round"/><path d="M16 22H32" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><path d="M16 28H32" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><path d="M16 34H24" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/></svg>`;
                     case 'video':
-                        return `<svg class="${sizeClasses}" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H38C39.1046 4 40 4.89543 40 6V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="#EFEBFF" stroke="#8B5CF6" stroke-width="2" stroke-linejoin="round"/><path d="M20 18L29 24L20 30V18Z" fill="#7C3AED" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+                        // Purple Video icon
+                        return `<svg class="${sizeClasses} text-purple-500" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H38C39.1046 4 40 4.89543 40 6V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="currentColor" opacity="0.3" stroke="#A855F7" stroke-width="2" stroke-linejoin="round"/><path d="M16 24V18L24 22L32 18V30L24 26L16 30V24Z" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
                     case 'zip':
-                        return `<svg class="${sizeClasses}" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H30L40 14V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="#FEFCE8" stroke="#EAB308" stroke-width="2" stroke-linejoin="round"/><path d="M30 4L40 14H30V4Z" fill="#FEF08A" stroke="#EAB308" stroke-width="2" stroke-linejoin="round"/><rect x="18" y="20" width="4" height="4" fill="#CA8A04" stroke="#CA8A04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="18" y="26" width="4" height="4" fill="#CA8A04" stroke="#CA8A04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="18" y="32" width="4" height="4" fill="#CA8A04" stroke="#CA8A04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 22H26" stroke="#CA8A04" stroke-width="2" stroke-linecap="round"/><path d="M22 28H26" stroke="#CA8A04" stroke-width="2" stroke-linecap="round"/><path d="M22 34H26" stroke="#CA8A04" stroke-width="2" stroke-linecap="round"/></svg>`;
+                        // Yellow Zip icon
+                        return `<svg class="${sizeClasses} text-yellow-500" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H38C39.1046 4 40 4.89543 40 6V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="currentColor" opacity="0.3" stroke="#F59E0B" stroke-width="2" stroke-linejoin="round"/><path d="M16 10L32 10" stroke="#D97706" stroke-width="2" stroke-linecap="round"/><path d="M16 16L32 16" stroke="#D97706" stroke-width="2" stroke-linecap="round"/><path d="M16 22L32 22" stroke="#D97706" stroke-width="2" stroke-linecap="round"/><path d="M16 28L32 28" stroke="#D97706" stroke-width="2" stroke-linecap="round"/><path d="M16 34L32 34" stroke="#D97706" stroke-width="2" stroke-linecap="round"/></svg>`;
                     default:
-                        return `<svg class="${sizeClasses}" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H30L40 14V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="2" stroke-linejoin="round"/><path d="M30 4L40 14H30V4Z" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="2" stroke-linejoin="round"/></svg>`;
+                        // Gray default icon
+                        return `<svg class="${sizeClasses} text-gray-400" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H38C39.1046 4 40 4.89543 40 6V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="currentColor" opacity="0.3" stroke="#9CA3AF" stroke-width="2" stroke-linejoin="round"/><path d="M30 4L40 14H30V4Z" fill="#D1D5DB" stroke="#9CA3AF" stroke-width="2" stroke-linejoin="round"/><path d="M16 24H32" stroke="#4B5563" stroke-width="2" stroke-linecap="round"/></svg>`;
                 }
             }
             
-            function renderBreadcrumbs() {
+            // --- File System Helpers ---
+
+            function findFileById(id) {
+                // Returns the file object and its current parent ID
+                const idToSearch = parseInt(id); // Handles folder IDs which are numbers
+
+                // FIX: Iterate over all possible parent keys, which can be strings (e.g., 'root') or folder IDs (numbers)
+                const parentKeys = Object.keys(fileSystem);
+
+                for (const parentId of parentKeys) {
+                    const file = fileSystem[parentId].find(f => f.id === idToSearch);
+                    if (file) return { file, parentId };
+                }
+                return null;
+            }
+
+            // IMPROVEMENT: Helper to check if a folder is an ancestor of another (Simplified mock version)
+            function isAncestor(ancestorId, descendantId) {
+                if (ancestorId == descendantId) return true;
+                if (ancestorId === 'root') return true;
+
+                let currentId = descendantId;
+                let fileData = findFileById(currentId);
+
+                // Simple check: iterate backward (up the hierarchy) from the descendant.
+                while (fileData && fileData.parentId !== 'root') {
+                    if (fileData.parentId == ancestorId) return true;
+                    
+                    // We need to find the file data for the parent ID now
+                    const nextParentId = fileData.parentId;
+                    
+                    // To continue traversing, we need the file object of the current parent, which we find recursively
+                    fileData = findFileById(nextParentId);
+
+                    // Break if we cannot resolve the parent file, preventing an infinite loop if data is missing
+                    if (!fileData) break;
+
+                    // If we find the original ancestor in the tree, return true
+                    if (fileData.file.id == ancestorId) return true;
+                }
+                return false;
+            }
+
+            function getMyFolders(currentFileId = null) {
+                // Recursive function to get all folders in the 'My Files' structure,
+                let folders = [];
+                
+                const fileData = currentFileId ? findFileById(currentFileId) : null;
+                const fileToMove = fileData ? fileData.file : null;
+
+                // Start with the 'root'
+                folders.push({ id: 'root', name: 'My Files (Root)', depth: 0, isCurrentParent: fileData && fileData.parentId === 'root' });
+
+                function traverse(parentFolders, depth = 0) {
+                    // IMPROVEMENT: Sort folders alphabetically
+                    parentFolders.sort((a, b) => a.name.localeCompare(b.name)).forEach(folder => {
+                        // Skip the folder itself if we are moving a folder
+                        if (fileToMove && fileToMove.type === 'folder' && folder.id === fileToMove.id) return;
+                        
+                        // FIX: Check if the folder is a descendant of the folder being moved (prevents self-into-subfolder move)
+                        if (fileToMove && fileToMove.type === 'folder' && folder.id !== 'root' && isAncestor(fileToMove.id, folder.id)) return;
+
+                        const isCurrentParent = fileData && folder.id == fileData.parentId;
+
+                        folders.push({ id: folder.id, name: folder.name, depth: depth, isCurrentParent: isCurrentParent });
+                        
+                        // Check for subfolders
+                        if (fileSystem[folder.id]) {
+                            const subFolders = fileSystem[folder.id].filter(f => f.type === 'folder');
+                            traverse(subFolders, depth + 1);
+                        }
+                    });
+                }
+                
+                const rootFolders = fileSystem['root'].filter(f => f.type === 'folder');
+                traverse(rootFolders, 1); // Start depth at 1 for folders inside root
+                
+                return folders;
+            }
+
+
+            // --- File Rendering Functions (existing) ---
+
+            function createGridItem(file) {
+                const element = document.createElement('div');
+                element.className = 'file-card bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm hover:shadow-lg cursor-pointer transition transform duration-200 ease-in-out border border-gray-200 dark:border-gray-700';
+                element.setAttribute('data-id', file.id);
+                element.setAttribute('data-type', file.type);
+                element.setAttribute('data-filetype', file.fileType || 'folder');
+                element.setAttribute('data-name', file.name);
+
+                element.innerHTML = `
+                    <div class="flex flex-col items-center">
+                        <div class="mb-3">
+                            ${getFileIcon(file.type === 'folder' ? 'folder' : file.fileType, 'w-14 h-14')}
+                        </div>
+                        <div class="w-full text-center">
+                            <span class="file-name block text-sm font-medium truncate" title="${file.name}">${file.name}</span>
+                            <span class="block text-xs text-gray-500 dark:text-gray-400 mt-1">${file.type === 'folder' ? 'Folder' : file.size}</span>
+                        </div>
+                    </div>
+                `;
+                return element;
+            }
+
+            function createListItem(file) {
+                const element = document.createElement('div');
+                element.className = 'file-list-item grid grid-cols-10 gap-4 items-center px-4 py-2 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors';
+                element.setAttribute('data-id', file.id);
+                element.setAttribute('data-type', file.type);
+                element.setAttribute('data-filetype', file.fileType || 'folder');
+                element.setAttribute('data-name', file.name);
+
+                element.innerHTML = `
+                    <div class="col-span-5 flex items-center min-w-0">
+                        <div class="mr-3 flex-shrink-0">
+                            ${getFileIcon(file.type === 'folder' ? 'folder' : file.fileType, 'w-6 h-6')}
+                        </div>
+                        <span class="file-name truncate font-medium text-sm" title="${file.name}">${file.name}</span>
+                    </div>
+                    <div class="col-span-3 text-sm text-gray-500 dark:text-gray-400">${formatDate(file.lastModified)}</div>
+                    <div class="col-span-2 text-sm text-gray-500 dark:text-gray-400">${file.type === 'folder' ? '-' : file.size}</div>
+                `;
+                return element;
+            }
+
+            function renderFiles(viewId, searchTerm = '') {
+                const files = fileSystem[viewId] || [];
+                const filteredFiles = files.filter(file => 
+                    file.name.toLowerCase().includes(searchTerm.toLowerCase())
+                ).sort((a, b) => {
+                    // IMPROVEMENT: Sort folders before files, then sort alphabetically by name
+                    if (a.type === 'folder' && b.type !== 'folder') return -1;
+                    if (a.type !== 'folder' && b.type === 'folder') return 1;
+                    return a.name.localeCompare(b.name);
+                });
+                
+                fileGrid.innerHTML = '';
+                fileListBody.innerHTML = '';
+                
+                if (filteredFiles.length === 0) {
+                    fileGrid.classList.add('hidden');
+                    fileList.classList.add('hidden');
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    filteredFiles.forEach(file => {
+                        fileGrid.appendChild(createGridItem(file));
+                        fileListBody.appendChild(createListItem(file));
+                    });
+                    fileGrid.classList.toggle('hidden', currentView === 'list');
+                    fileList.classList.toggle('hidden', currentView === 'grid');
+                }
+                // Ensure the list header is visible only when in list view and there are files
+                fileList.querySelector('.file-list-header').classList.toggle('hidden', currentView === 'grid' || filteredFiles.length === 0);
+                lucide.createIcons(); // Render new lucide icons
+            }
+
+            function updateBreadcrumbs() {
                 breadcrumbList.innerHTML = '';
                 breadcrumbStack.forEach((crumb, index) => {
                     const li = document.createElement('li');
+                    
+                    const span = document.createElement('span');
+                    span.textContent = crumb.name;
+                    span.className = 'cursor-pointer transition-colors hover:text-blue-600 dark:hover:text-blue-400';
+                    span.setAttribute('data-id', crumb.id);
+                    span.setAttribute('data-type', crumb.type);
+                    
                     if (index === breadcrumbStack.length - 1) {
-                        // Last item (current folder)
-                        li.innerHTML = `<span class="font-semibold text-xl text-gray-900 dark:text-white">${crumb.name}</span>`;
+                        span.className = 'text-gray-900 dark:text-white';
+                        li.appendChild(span);
                     } else {
-                        // Clickable parent folder
-                        li.innerHTML = `
-                            <a href="#" data-crumb-id="${crumb.id}" data-crumb-index="${index}" class="text-xl font-semibold hover:text-blue-600 dark:hover:text-blue-400">${crumb.name}</a>
-                            <i data-lucide="chevron-right" class="w-5 h-5 mx-2 text-gray-400"></i>
-                        `;
+                        li.appendChild(span);
+                        
+                        const separator = document.createElement('i');
+                        separator.setAttribute('data-lucide', 'chevron-right');
+                        separator.className = 'w-4 h-4 mx-1 text-gray-400';
+                        li.appendChild(separator);
                     }
                     breadcrumbList.appendChild(li);
                 });
-                
-                // Add click handlers to breadcrumb links
-                breadcrumbList.querySelectorAll('a').forEach(a => {
-                    a.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        if (currentFileRenaming) saveRename(currentFileRenaming); // Save rename
-                        const index = parseInt(e.currentTarget.dataset.crumbIndex);
-                        breadcrumbStack.splice(index + 1); // Cut stack
-                        filterAndRenderFiles(); // Re-render
-                    });
-                });
                 lucide.createIcons();
             }
 
-            function renderFiles(filesToRender) {
-                fileGrid.innerHTML = ''; // Clear grid
-                fileListBody.innerHTML = ''; // Clear list
-                
-                if (filesToRender.length === 0) {
-                    emptyState.classList.remove('hidden');
-                    fileGrid.classList.add('hidden');
-                    fileList.classList.add('hidden');
-                    return;
-                }
-                
-                emptyState.classList.add('hidden');
-                // Show current view
-                if (currentView === 'grid') {
-                    fileGrid.classList.remove('hidden');
-                } else {
-                    fileList.classList.remove('hidden');
-                }
+            function navigateTo(id, name, type) {
+                const isNavRoot = ['root', 'shared', 'recents', 'trash'].includes(id);
 
-                filesToRender.forEach(file => {
-                    const fileTypeKey = file.type === 'folder' ? 'folder' : file.fileType;
-
-                    // --- Create Grid Card ---
-                    const fileCard = document.createElement('div');
-                    fileCard.className = 'file-card bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200';
-                    fileCard.dataset.fileId = file.id;
-                    fileCard.innerHTML = `
-                        <div class="mb-3">
-                            ${getFileIcon(fileTypeKey, 'w-12 h-12')}
-                        </div>
-                        <span class="file-name w-full text-sm font-medium text-gray-800 dark:text-gray-100 truncate">${file.name}</span>
-                        <input type="text" class="rename-input hidden" value="${file.name}" />
-                        <span class="text-xs text-gray-500 dark:text-gray-400 mt-1">${file.size}</span>
-                    `;
+                if (isNavRoot) {
+                    breadcrumbStack = [{ id: id, name: name, type: 'nav' }];
                     
-                    // --- Create List Item ---
-                    const fileListItem = document.createElement('div');
-                    fileListItem.className = 'file-list-item grid grid-cols-10 gap-4 items-center px-4 py-3 border-b border-gray-200 dark:border-gray-700 cursor-pointer transition-colors duration-150';
-                    fileListItem.dataset.fileId = file.id;
-                    fileListItem.innerHTML = `
-                        <div class="col-span-10 md:col-span-5 flex items-center min-w-0">
-                            ${getFileIcon(fileTypeKey, 'w-6 h-6 flex-shrink-0')}
-                            <div class="ml-3 min-w-0 flex-1">
-                                <span class="file-name text-sm font-medium text-gray-800 dark:text-gray-100 truncate block">${file.name}</span>
-                                <input type="text" class="rename-input hidden" value="${file.name}" />
-                            </div>
-                        </div>
-                        <div class="col-span-5 md:col-span-3 text-sm text-gray-600 dark:text-gray-400">${file.lastModified}</div>
-                        <div class="col-span-5 md:col-span-2 text-sm text-gray-600 dark:text-gray-400">${file.size}</div>
-                    `;
+                    // Remove active class from all nav links
+                    navLinks.forEach(link => {
+                        link.classList.remove('nav-link-active');
+                        link.classList.add('nav-link-inactive');
+                    });
 
-                    // Add listeners to both
-                    [fileCard, fileListItem].forEach(el => {
-                        el.addEventListener('click', () => {
-                            if (currentFileRenaming) return; // Don't click if renaming
-                            
-                            if (file.type === 'folder') {
-                                breadcrumbStack.push({ id: file.id, name: file.name });
-                                filterAndRenderFiles();
-                            } else {
-                                currentFileForModal = file;
-                                openPreviewModal(file);
+                    // Add active class to the selected link
+                    const activeLink = document.querySelector(`#sidebar-nav a[data-target="${id}"]`);
+                    if(activeLink) {
+                        activeLink.classList.add('nav-link-active');
+                        activeLink.classList.remove('nav-link-inactive');
+                    }
+
+                    // Context menu only enabled in file-holding sections (My Files/subfolders/Trash)
+                    const enableContextMenu = id === 'root' || !isNaN(parseInt(id)) || id === 'trash';
+                    contextMenu.classList.toggle('context-menu-disabled', !enableContextMenu);
+
+                    // Upload/New Folder buttons only work in 'My Files' and its sub-folders
+                    const enableCreation = id === 'root' || (!isNaN(parseInt(id)) && id in fileSystem);
+                    uploadButton.disabled = !enableCreation;
+                    newFolderBtn.disabled = !enableCreation;
+                    uploadButton.classList.toggle('opacity-50', !enableCreation);
+                    newFolderBtn.classList.toggle('opacity-50', !enableCreation);
+
+                } else {
+                    const existingIndex = breadcrumbStack.findIndex(crumb => crumb.id === id);
+                    if (existingIndex > -1) {
+                        breadcrumbStack.splice(existingIndex + 1);
+                    } else {
+                        breadcrumbStack.push({ id: id, name: name, type: type });
+                    }
+                    // Ensure 'My Files' is highlighted when navigating into subfolders
+                    const myFilesLink = document.getElementById('nav-my-files');
+                    if (myFilesLink) {
+                        myFilesLink.classList.add('nav-link-active');
+                        myFilesLink.classList.remove('nav-link-inactive');
+                        // IMPROVEMENT: Deactivate other main nav links if inside a subfolder
+                        navLinks.forEach(link => {
+                            if(link.getAttribute('data-target') !== 'root') {
+                                link.classList.remove('nav-link-active');
+                                link.classList.add('nav-link-inactive');
                             }
                         });
-                        el.addEventListener('contextmenu', (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (currentFileRenaming) saveRename(currentFileRenaming); // Save any rename
-                            
-                            currentFileForContext = file; // Store file for context actions
-                            showContextMenu(e.clientX, e.clientY, file);
-                        });
-                    });
+                    }
+                }
+                
+                currentViewId = id;
+                updateBreadcrumbs();
+                renderFiles(currentViewId);
+            }
 
-                    fileGrid.appendChild(fileCard);
-                    fileListBody.appendChild(fileListItem);
+            function renameFileInDOM(id, newName) {
+                const fileElementGrid = document.querySelector(`#file-grid [data-id="${id}"] .file-name`);
+                const fileElementList = document.querySelector(`#file-list [data-id="${id}"] .file-name`);
+                
+                if (fileElementGrid) {
+                    fileElementGrid.textContent = newName;
+                    fileElementGrid.title = newName;
+                    fileElementGrid.closest('[data-name]').setAttribute('data-name', newName); // IMPROVEMENT: Update data-name attribute
+                }
+                if (fileElementList) {
+                    fileElementList.textContent = newName;
+                    fileElementList.title = newName;
+                    fileElementList.closest('[data-name]').setAttribute('data-name', newName); // IMPROVEMENT: Update data-name attribute
+                }
+
+                const fileData = findFileById(id);
+                if (fileData) {
+                    fileData.file.name = newName;
+                }
+
+                currentFileRenaming = null;
+            }
+
+            function initiateRename(fileId) {
+                const fileData = findFileById(fileId);
+                if (!fileData) return;
+
+                currentFileRenaming = fileId;
+                const viewSelector = currentView === 'grid' ? `#file-grid [data-id="${fileId}"]` : `#file-list [data-id="${fileId}"]`;
+                const fileElement = document.querySelector(viewSelector);
+                const nameElement = fileElement.querySelector('.file-name');
+
+                if (nameElement) {
+                    const originalName = fileData.file.name;
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'rename-input';
+                    input.value = originalName;
+
+                    nameElement.innerHTML = '';
+                    nameElement.appendChild(input);
+                    input.focus();
                     
-                    // Add rename listeners
-                    fileCard.querySelector('.rename-input').addEventListener('click', e => e.stopPropagation());
-                    fileListItem.querySelector('.rename-input').addEventListener('click', e => e.stopPropagation());
-                    fileCard.querySelector('.rename-input').addEventListener('blur', () => saveRename(file.id));
-                    fileListItem.querySelector('.rename-input').addEventListener('blur', () => saveRename(file.id));
-                    fileCard.querySelector('.rename-input').addEventListener('keydown', e => handleRenameKeydown(e, file.id));
-                    fileListItem.querySelector('.rename-input').addEventListener('keydown', e => handleRenameKeydown(e, file.id));
+                    const dotIndex = originalName.lastIndexOf('.');
+                    const selectionEnd = dotIndex > 0 && fileData.file.type !== 'folder' ? dotIndex : originalName.length;
+                    input.setSelectionRange(0, selectionEnd);
+
+                    const finishRename = () => {
+                        let newName = input.value.trim();
+                        if (newName && newName !== originalName) {
+                            renameFileInDOM(fileId, newName);
+                        } else {
+                            nameElement.textContent = originalName;
+                            nameElement.title = originalName;
+                        }
+                        currentFileRenaming = null;
+                    };
+
+                    input.addEventListener('blur', finishRename);
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            finishRename();
+                        }
+                        if (e.key === 'Escape') {
+                            input.value = originalName;
+                            finishRename();
+                        }
+                    });
+                }
+            }
+            
+            // --- Move Modal Logic (NEW) ---
+
+            function createFolderItemForMove(folder) {
+                const element = document.createElement('div');
+                const padding = folder.depth * 10; // Simple indentation
+                
+                let isDisabled = false;
+                const fileToMoveId = currentFileForContext.id;
+                
+                if(currentFileForContext.type === 'folder') {
+                    // Cannot move a folder into itself
+                    if (folder.id == fileToMoveId) {
+                        isDisabled = true; 
+                    } 
+                    // Cannot move a folder into one of its sub-folders (simplified check)
+                    else if (isAncestor(fileToMoveId, folder.id)) {
+                        isDisabled = true; 
+                    }
+                }
+                
+                // Cannot move into the current parent folder (just disables the confirm button, not the list item)
+                const currentParentId = findFileById(fileToMoveId).parentId;
+                const isCurrentParent = folder.id == currentParentId;
+                
+                element.className = `folder-item flex items-center p-2 rounded-lg border border-transparent hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors cursor-pointer ${isDisabled ? 'opacity-50 pointer-events-none' : ''}`;
+                element.setAttribute('data-id', folder.id);
+                element.style.paddingLeft = `${16 + padding}px`; // 16px base padding + indentation
+                
+                element.innerHTML = `
+                    <i data-lucide="folder" class="w-5 h-5 mr-3 text-blue-500 flex-shrink-0"></i>
+                    <span class="font-medium text-sm truncate">${folder.name}</span>
+                `;
+
+                // IMPROVEMENT: Select the current parent folder by default
+                if (isCurrentParent) {
+                    element.classList.add('selected');
+                }
+                return element;
+            }
+
+            function renderFoldersForMove() {
+                if (!currentFileForContext) return;
+                
+                folderListForMove.innerHTML = '';
+                
+                // If moving a folder, pass its ID to assist in filtering its descendants.
+                const folderList = getMyFolders(currentFileForContext.type === 'folder' ? currentFileForContext.id : null);
+                
+                selectedDestinationFolderId = null;
+
+                const currentParentId = findFileById(currentFileForContext.id).parentId;
+                confirmMoveButton.disabled = true;
+
+                folderList.forEach(folder => {
+                    const item = createFolderItemForMove(folder);
+                    folderListForMove.appendChild(item);
+
+                    // Initial selection based on createFolderItemForMove
+                    if (item.classList.contains('selected')) {
+                        selectedDestinationFolderId = folder.id;
+                        confirmMoveButton.disabled = true; // Disabled because it's the current parent
+                    }
                 });
                 
                 lucide.createIcons();
-            }
-
-            // --- Context Menu ---
-            function showContextMenu(x, y, file) {
-                const screenW = window.innerWidth;
-                const screenH = window.innerHeight;
-                const menuW = contextMenu.offsetWidth;
-                const menuH = contextMenu.offsetHeight;
-
-                contextMenu.style.left = `${x + menuW > screenW ? screenW - menuW - 10 : x}px`;
-                contextMenu.style.top = `${y + menuH > screenH ? screenH - menuH - 10 : y}px`;
                 
-                if (file.type === 'folder') {
-                    contextPreview.classList.add('opacity-50', 'pointer-events-none');
-                    contextDownload.classList.add('opacity-50', 'pointer-events-none');
-                } else {
-                    contextPreview.classList.remove('opacity-50', 'pointer-events-none');
-                    contextDownload.classList.remove('opacity-50', 'pointer-events-none');
-                }
+                // Set click listeners for selection
+                document.querySelectorAll('.folder-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation(); 
+                        if (item.classList.contains('opacity-50')) return;
 
-                // Show restore only when viewing Trash
-                if (breadcrumbStack.at(-1).id === 'trash') {
-                    contextRestore.classList.remove('hidden');
-                } else {
-                    contextRestore.classList.add('hidden');
-                }
-
-                contextMenu.classList.remove('context-menu-hidden');
-                contextMenu.classList.add('context-menu-visible');
+                        const targetId = item.getAttribute('data-id');
+                        
+                        // Clear existing selection
+                        document.querySelectorAll('.folder-item').forEach(i => i.classList.remove('selected'));
+                        
+                        // Set new selection
+                        item.classList.add('selected');
+                        selectedDestinationFolderId = targetId;
+                        
+                        // Enable button if destination is different from the current parent
+                        confirmMoveButton.disabled = targetId == currentParentId;
+                    });
+                });
             }
 
+            contextMove.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentFileForContext) {
+                    renderFoldersForMove();
+                    openModal(moveModal);
+                    hideContextMenu();
+                }
+            });
+            
+            closeMoveModal.addEventListener('click', () => closeModal(moveModal));
+            cancelMoveButton.addEventListener('click', () => closeModal(moveModal));
+            
+            confirmMoveButton.addEventListener('click', () => {
+                if (!currentFileForContext || !selectedDestinationFolderId) return;
+
+                const fileToMove = currentFileForContext;
+                const sourceParent = findFileById(fileToMove.id);
+                const sourceParentId = sourceParent.parentId;
+                const destinationId = selectedDestinationFolderId;
+
+                // 1. Remove from source
+                fileSystem[sourceParentId] = fileSystem[sourceParentId].filter(f => f.id !== fileToMove.id);
+
+                // 2. Add to destination
+                if (!fileSystem[destinationId]) {
+                    fileSystem[destinationId] = [];
+                }
+                fileSystem[destinationId].unshift(fileToMove);
+                
+                // Update the file's last modified date
+                fileToMove.lastModified = new Date().toISOString().split('T')[0];
+
+                alert(`Moved "${fileToMove.name}" to folder ID: ${destinationId}`);
+
+                closeModal(moveModal);
+                
+                // If the item was moved out of the current view, it disappears.
+                // If it was moved within the current view, it gets re-rendered at the top (due to unshift/sort).
+                renderFiles(currentViewId, searchInput.value); 
+            });
+
+
+            // --- Event Handlers (modified/existing) ---
+
+            // General click listener for file interaction (existing)
+            fileWorkspace.addEventListener('click', (e) => {
+                let target = e.target.closest('.file-card') || e.target.closest('.file-list-item');
+                if (target && target.getAttribute('data-id') != currentFileRenaming) {
+                    const fileId = target.getAttribute('data-id');
+                    const fileType = target.getAttribute('data-type');
+                    const fileName = target.getAttribute('data-name');
+
+                    if (fileType === 'folder') {
+                        navigateTo(fileId, fileName, 'folder');
+                    } else if (fileType === 'file') {
+                        showPreviewModal(fileId);
+                    }
+                }
+            });
+
+            // Navigation Clicks (existing)
+            document.getElementById('sidebar-nav').addEventListener('click', (e) => {
+                const link = e.target.closest('.nav-link');
+                if (link) {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    const targetName = link.textContent.trim();
+                    navigateTo(targetId, targetName, 'nav');
+                    sidebar.classList.add('-translate-x-full');
+                    sidebarBackdrop.classList.add('hidden');
+                }
+            });
+
+            // Breadcrumb Clicks (existing)
+            breadcrumbList.addEventListener('click', (e) => {
+                const span = e.target.closest('span');
+                if (span && span.hasAttribute('data-id')) {
+                    const id = span.getAttribute('data-id');
+                    const name = span.textContent.trim();
+                    const type = span.getAttribute('data-type');
+                    
+                    if (id !== currentViewId) {
+                            navigateTo(id, name, type);
+                    }
+                }
+            });
+
+            // Search input (existing)
+            searchInput.addEventListener('input', (e) => {
+                renderFiles(currentViewId, e.target.value);
+            });
+            
+            // View Toggles (existing)
+            function setView(view) {
+                currentView = view;
+                if (view === 'grid') {
+                    fileGrid.classList.remove('hidden');
+                    fileList.classList.add('hidden');
+                    viewToggleGrid.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-white', 'shadow-sm');
+                    viewToggleGrid.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                    viewToggleList.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                    viewToggleList.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-white', 'shadow-sm');
+                } else {
+                    fileList.classList.remove('hidden');
+                    fileGrid.classList.add('hidden');
+                    fileList.querySelector('.file-list-header').classList.remove('hidden');
+                    viewToggleList.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-white', 'shadow-sm');
+                    viewToggleList.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                    viewToggleGrid.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                    viewToggleGrid.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-white', 'shadow-sm');
+                }
+                renderFiles(currentViewId, searchInput.value); // Re-render to show/hide header correctly
+                lucide.createIcons();
+            }
+
+            viewToggleList.addEventListener('click', () => setView('list'));
+            viewToggleGrid.addEventListener('click', () => setView('grid'));
+
+            // Mobile menu toggle (existing)
+            mobileMenuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
+                sidebarBackdrop.classList.toggle('hidden');
+            });
+            sidebarBackdrop.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                sidebarBackdrop.classList.add('hidden');
+            });
+
+            // --- Context Menu Logic (existing) ---
             function hideContextMenu() {
                 contextMenu.classList.add('context-menu-hidden');
                 contextMenu.classList.remove('context-menu-visible');
+                if (currentFileForContext) {
+                    const fileElement = document.querySelector(`[data-id="${currentFileForContext.id}"]`);
+                    if (fileElement) {
+                        fileElement.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-2');
+                    }
+                }
                 currentFileForContext = null;
             }
 
-            window.addEventListener('click', () => {
-                hideContextMenu();
-                if (currentFileRenaming) saveRename(currentFileRenaming);
+            fileWorkspace.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                let target = e.target.closest('.file-card') || e.target.closest('.file-list-item');
+
+                // Check for disabled context menu 
+                if (contextMenu.classList.contains('context-menu-disabled') && target) {
+                    hideContextMenu();
+                    return;
+                }
+
+                if (target) {
+                    hideContextMenu();
+
+                    const fileId = parseInt(target.getAttribute('data-id'));
+                    const fileData = findFileById(fileId);
+                    if (!fileData) return;
+                    currentFileForContext = fileData.file;
+
+                    target.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2');
+                    
+                    // Show/Hide context menu items based on file type/location
+                    const isTrash = currentViewId === 'trash';
+                    const isFolder = fileData.file.type === 'folder';
+
+                    contextRestore.classList.toggle('hidden', !isTrash);
+                    contextDelete.textContent = isTrash ? 'Delete Forever' : 'Delete';
+                    
+                    // Preview is for files only, and not in trash
+                    contextPreview.classList.toggle('hidden', isFolder || isTrash); 
+                    
+                    // Share/Download only for files, not in trash
+                    contextShare.classList.toggle('hidden', isFolder || isTrash);
+                    contextDownload.classList.toggle('hidden', isFolder || isTrash);
+                    
+                    // Duplicate/Move/Rename only if not in trash
+                    contextDuplicate.classList.toggle('hidden', isTrash);
+                    contextMove.classList.toggle('hidden', isTrash);
+                    contextRename.classList.toggle('hidden', isTrash);
+
+                    let x = e.clientX;
+                    let y = e.clientY;
+
+                    if (x + 200 > window.innerWidth) x = window.innerWidth - 210;
+                    if (y + 300 > window.innerHeight) y = window.innerHeight - 310;
+
+                    contextMenu.style.left = `${x}px`;
+                    contextMenu.style.top = `${y}px`;
+                    contextMenu.classList.remove('context-menu-hidden');
+                    contextMenu.classList.add('context-menu-visible');
+                } else {
+                    hideContextMenu();
+                }
             });
-            fileWorkspace.addEventListener('scroll', () => {
-                hideContextMenu();
-                if (currentFileRenaming) saveRename(currentFileRenaming);
+
+            // Hide context menu on global click/scroll (FIX: prevents hiding when clicking inside a modal)
+            document.addEventListener('click', (e) => {
+                const isModalTarget = e.target.closest('.modal-backdrop.modal-visible');
+                if (!contextMenu.contains(e.target) && e.target.closest('.rename-input') === null && !isModalTarget) {
+                    hideContextMenu();
+                }
             });
-            
-            // Context Menu Actions
-            contextDelete.addEventListener('click', (e) => {
+
+            fileWorkspace.addEventListener('scroll', hideContextMenu);
+
+            // Context Menu Actions (existing)
+            contextRename.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (currentFileForContext) {
-                    const currentFolderId = breadcrumbStack.at(-1).id;
-
-                    // If we're in Trash, permanently delete
-                    if (currentFolderId === 'trash') {
-                        fileSystem['trash'] = (fileSystem['trash'] || []).filter(f => f.id !== currentFileForContext.id);
-                        filterAndRenderFiles();
-                        hideContextMenu();
-                        return;
-                    }
-
-                    // Remove from current folder
-                    fileSystem[currentFolderId] = (fileSystem[currentFolderId] || []).filter(f => f.id !== currentFileForContext.id);
-                    // Move to trash
-                    if (!fileSystem['trash']) fileSystem['trash'] = [];
-                    fileSystem['trash'].unshift(currentFileForContext);
-                    
-                    filterAndRenderFiles();
+                    initiateRename(currentFileForContext.id);
                     hideContextMenu();
                 }
             });
@@ -747,8 +1202,7 @@
             contextPreview.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (currentFileForContext) {
-                    currentFileForModal = currentFileForContext;
-                    openPreviewModal(currentFileForContext);
+                    showPreviewModal(currentFileForContext.id);
                     hideContextMenu();
                 }
             });
@@ -756,461 +1210,362 @@
             contextShare.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (currentFileForContext) {
-                    currentFileForModal = currentFileForContext;
-                    openShareModal();
+                    showShareModal(currentFileForContext.id);
                     hideContextMenu();
                 }
             });
-            
-            contextRename.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (currentFileForContext) {
-                    startRename(currentFileForContext.id);
-                    hideContextMenu();
-                }
-            });
-            
+
             contextDownload.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (currentFileForContext) {
-                    downloadFile(currentFileForContext);
+                    alert(`Downloading ${currentFileForContext.name}... (In a real app, this would trigger a download)`);
                     hideContextMenu();
                 }
             });
 
-            // Duplicate
-            contextDuplicate?.addEventListener('click', (e) => {
-                e?.preventDefault();
-                const file = currentFileForContext;
-                if (!file) return;
-                const folder = breadcrumbStack.at(-1).id;
-                const copy = {...file, id: Date.now(), name: file.name + " (copy)"};
-                if (!fileSystem[folder]) fileSystem[folder] = [];
-                fileSystem[folder].unshift(copy);
-                filterAndRenderFiles();
-                hideContextMenu();
-            });
+            contextDuplicate.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentFileForContext && currentViewId !== 'trash') {
+                    const originalFile = currentFileForContext;
+                    const newFile = {
+                        ...originalFile,
+                        id: Date.now() + Math.floor(Math.random() * 1000), // New unique ID
+                        name: `Copy of ${originalFile.name}`,
+                        lastModified: new Date().toISOString().split('T')[0]
+                    };
 
-            // Move To...
-            contextMove?.addEventListener('click', (e) => {
-                e?.preventDefault();
-                const file = currentFileForContext;
-                if (!file) return;
-                const currentFolder = breadcrumbStack.at(-1).id;
-                const targetFolder = prompt("Enter folder ID to move file to:");
-                if (!targetFolder) return;
-                if (!fileSystem[targetFolder]) {
-                    alert("Invalid folder ID");
-                    return;
+                    // Add to the current folder's file system
+                    fileSystem[currentViewId].unshift(newFile);
+                    
+                    alert(`Duplicated ${originalFile.name}.`);
+                    hideContextMenu();
+                    renderFiles(currentViewId, searchInput.value);
                 }
-                // Remove from current
-                fileSystem[currentFolder] = (fileSystem[currentFolder] || []).filter(f => f.id !== file.id);
-                // Add to target
-                fileSystem[targetFolder].unshift(file);
-                filterAndRenderFiles();
-                hideContextMenu();
             });
 
-            // Restore from Trash
-            contextRestore?.addEventListener('click', (e) => {
-                e?.preventDefault();
-                const file = currentFileForContext;
-                if (!file) return;
-                // remove from trash
-                fileSystem['trash'] = (fileSystem['trash'] || []).filter(f => f.id !== file.id);
-                // restore to root
-                if (!fileSystem['root']) fileSystem['root'] = [];
-                fileSystem['root'].unshift(file);
-                filterAndRenderFiles();
-                hideContextMenu();
-            });
-            
-            // --- Rename Functions ---
-            function startRename(fileId) {
-                if (currentFileRenaming) saveRename(currentFileRenaming); // Save any other
-                currentFileRenaming = fileId;
-                
-                document.querySelectorAll(`[data-file-id="${fileId}"]`).forEach(el => {
-                    const nameEl = el.querySelector('.file-name');
-                    const inputEl = el.querySelector('.rename-input');
-                    if(nameEl && inputEl) {
-                        nameEl.classList.add('hidden');
-                        inputEl.classList.remove('hidden');
-                        inputEl.focus();
-                        inputEl.select();
+            contextRestore.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentFileForContext && currentViewId === 'trash') {
+                    const fileToRestore = currentFileForContext;
+                    const fileData = findFileById(fileToRestore.id); 
+
+                    if (fileData) {
+                        // 1. Remove from trash
+                        fileSystem['trash'] = fileSystem['trash'].filter(f => f.id !== fileToRestore.id);
+                        
+                        // 2. Add back to 'root' (simplified: should remember original parent)
+                        if (!fileSystem['root'].find(f => f.id === fileToRestore.id)) {
+                            fileSystem['root'].unshift({ ...fileToRestore, lastModified: new Date().toISOString().split('T')[0] });
+                        }
+
+                        alert(`Restored ${fileToRestore.name} to My Files.`);
+                        hideContextMenu();
+                        renderFiles(currentViewId, searchInput.value); 
                     }
-                });
-            }
-            
-            function saveRename(fileId) {
-                if (fileId !== currentFileRenaming) return;
-                
-                const currentFolderId = breadcrumbStack.at(-1).id;
-                const file = fileSystem[currentFolderId]?.find(f => f.id === fileId);
-                
-                if (!file) {
-                     currentFileRenaming = null;
-                     return;
                 }
-                
-                let newName = document.querySelector(`[data-file-id="${fileId}"] .rename-input`).value;
-                if(newName.trim() === "") newName = file.name;
-                file.name = newName;
-                
-                document.querySelectorAll(`[data-file-id="${fileId}"]`).forEach(el => {
-                    const nameEl = el.querySelector('.file-name');
-                    const inputEl = el.querySelector('.rename-input');
-                    if(nameEl && inputEl) {
-                        nameEl.textContent = newName;
-                        nameEl.classList.remove('hidden');
-                        inputEl.classList.add('hidden');
-                        inputEl.value = newName;
-                    }
-                });
-                currentFileRenaming = null;
-            }
-            
-            function handleRenameKeydown(e, fileId) {
-                if (e.key === 'Enter') {
-                    saveRename(fileId);
-                } else if (e.key === 'Escape') {
-                    const currentFolderId = breadcrumbStack.at(-1).id;
-                    const file = fileSystem[currentFolderId].find(f => f.id === fileId);
-                    e.target.value = file.name; // Reset
-                    saveRename(fileId); // "Saves" (cancels)
-                }
-            }
+            });
 
-            // --- Modal Utilities ---
-            function openModal(modalEl, contentEl) {
-                modalEl.classList.remove('modal-hidden');
-                modalEl.classList.add('modal-visible');
+            contextDelete.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentFileForContext) {
+                    const action = currentViewId === 'trash' ? 'Delete Forever' : 'Move to Trash';
+                    
+                    const fileData = findFileById(currentFileForContext.id);
+                    if (fileData) {
+                         alert(`${action} on ${currentFileForContext.name}... (Simulated action)`);
+                        
+                        // 1. Remove from its current location
+                        fileSystem[fileData.parentId] = fileSystem[fileData.parentId].filter(f => f.id !== currentFileForContext.id);
+                        
+                        // 2. If it was in My Files/Subfolder, move to trash. If it was in trash, it's deleted permanently.
+                        if (!['shared', 'recents', 'trash'].includes(fileData.parentId)) {
+                            fileSystem['trash'].unshift({ ...fileData.file, lastModified: new Date().toISOString().split('T')[0] });
+                        }
+                        
+                        hideContextMenu();
+                        renderFiles(currentViewId, searchInput.value);
+                    }
+                }
+            });
+            
+            // --- Modals Logic (existing) ---
+            function openModal(modal) {
+                modal.classList.remove('modal-hidden');
+                modal.classList.add('modal-visible');
+                const content = modal.querySelector('.modal-content');
                 setTimeout(() => {
-                    modalEl.classList.add('opacity-100');
-                    contentEl.classList.remove('modal-content-hidden');
-                    contentEl.classList.add('modal-content-visible');
+                    content.classList.remove('modal-content-hidden');
+                    content.classList.add('modal-content-visible');
                 }, 10);
-                lucide.createIcons(); // Re-init icons in modal
+                document.body.style.overflow = 'hidden';
             }
 
-            function closeModal(modalEl, contentEl) {
-                modalEl.classList.remove('opacity-100');
-                contentEl.classList.remove('modal-content-visible');
-                contentEl.classList.add('modal-content-hidden');
+            function closeModal(modal) {
+                const content = modal.querySelector('.modal-content');
+                content.classList.remove('modal-content-visible');
+                content.classList.add('modal-content-hidden');
                 setTimeout(() => {
-                    modalEl.classList.add('modal-hidden');
-                    modalEl.classList.remove('modal-visible');
+                    modal.classList.remove('modal-visible');
+                    modal.classList.add('modal-hidden');
+                    document.body.style.overflow = 'auto';
+                    currentFileForModal = null;
                 }, 200);
             }
 
-            // --- Preview Modal ---
-            function openPreviewModal(file) {
-                if (file.type === 'folder') return;
-                const fileTypeKey = file.fileType;
+            // Preview Modal Functions (existing)
+            function showPreviewModal(fileId) {
+                const fileData = findFileById(fileId);
+                if (!fileData || fileData.file.type === 'folder') return;
+                const file = fileData.file;
+                currentFileForModal = file;
+
                 previewFilename.textContent = file.name;
-                previewIcon.innerHTML = getFileIcon(fileTypeKey, 'w-5 h-5').replace('text-gray-500', '');
-
-                if (file.fileType === 'image') {
-                    previewImage.src = `https://placehold.co/800x600/e2e8f0/94a3b8?text=${file.name.split('.')[0]}`;
+                
+                previewImage.classList.add('hidden');
+                previewOther.classList.add('hidden');
+                previewIcon.innerHTML = '';
+                previewOtherIcon.innerHTML = '';
+                previewImage.src = '';
+                
+                if (file.fileType === 'image' || file.fileType === 'jpg' || file.fileType === 'png') {
+                    previewImage.src = `https://placehold.co/800x600/e2e8f0/94a3b8?text=${file.name}`;
                     previewImage.classList.remove('hidden');
-                    previewOther.classList.add('hidden');
-                } else {
-                    previewImage.classList.add('hidden');
+                    previewIcon.innerHTML = `<i data-lucide="image" class="w-5 h-5"></i>`;
+                } else if (file.fileType === 'pdf') {
                     previewOther.classList.remove('hidden');
-                    previewOther.querySelector('p').textContent = `Preview not available for ${file.fileType} files.`;
-                    previewOtherIcon.innerHTML = getFileIcon(fileTypeKey, 'w-24 h-24 text-gray-400');
+                    previewOther.querySelector('p').textContent = 'Viewing PDF... (Simulated)';
+                    previewOtherIcon.innerHTML = `<i data-lucide="file-text" class="w-24 h-24"></i>`;
+                    previewIcon.innerHTML = `<i data-lucide="file-text" class="w-5 h-5"></i>`;
+                } else if (file.fileType === 'video' || file.fileType === 'mp4') {
+                     previewOther.classList.remove('hidden');
+                    previewOther.querySelector('p').textContent = 'Playing Video... (Simulated)';
+                    previewOtherIcon.innerHTML = `<i data-lucide="video" class="w-24 h-24"></i>`;
+                    previewIcon.innerHTML = `<i data-lucide="video" class="w-5 h-5"></i>`;
+                } else {
+                    previewOther.classList.remove('hidden');
+                    previewOther.querySelector('p').textContent = 'Preview not available for this file type.';
+                    previewOtherIcon.innerHTML = `<i data-lucide="file" class="w-24 h-24"></i>`;
+                    previewIcon.innerHTML = `<i data-lucide="file" class="w-5 h-5"></i>`;
                 }
-                openModal(previewModal, previewModalContent);
+                lucide.createIcons();
+                openModal(previewModal);
             }
-            closePreviewModal.addEventListener('click', () => closeModal(previewModal, previewModalContent));
-            previewModal.addEventListener('click', (e) => {
-                if (e.target === previewModal) closeModal(previewModal, previewModalContent);
-            });
-            shareButtonModal.addEventListener('click', () => openShareModal());
-            downloadButtonModal.addEventListener('click', () => downloadFile(currentFileForModal));
 
-            // --- Share Modal ---
-            function openShareModal() {
-                const fakeId = Math.random().toString(36).substring(2, 10);
-                shareLinkInput.value = `https://nimbus.drive/share/${fakeId}`;
-                copyLinkSuccess.classList.add('hidden');
-                copyLinkButton.textContent = 'Copy';
-                openModal(shareModal, shareModalContent);
-            }
-            closeShareModal.addEventListener('click', () => closeModal(shareModal, shareModalContent));
-            shareModal.addEventListener('click', (e) => {
-                if (e.target === shareModal) closeModal(shareModal, shareModalContent);
+            closePreviewModal.addEventListener('click', () => closeModal(previewModal));
+            
+            previewModal.addEventListener('click', (e) => {
+                if (e.target === previewModal) {
+                    closeModal(previewModal);
+                }
             });
-            copyLinkButton.addEventListener('click', () => {
-                navigator.clipboard.writeText(shareLinkInput.value).then(() => {
+            
+            // FIX: Use currentFileForModal when sharing/downloading from preview modal
+            downloadButtonModal.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentFileForModal) {
+                    alert(`Downloading ${currentFileForModal.name}... (Simulated download)`);
+                    closeModal(previewModal);
+                }
+            });
+
+            shareButtonModal.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentFileForModal) {
+                    closeModal(previewModal);
+                    showShareModal(currentFileForModal.id);
+                }
+            });
+            // End of FIX
+            
+            // Share Modal Functions (existing)
+            function showShareModal(fileId) {
+                const fileData = findFileById(fileId);
+                if (!fileData || fileData.file.type === 'folder') return;
+                const file = fileData.file;
+                currentFileForModal = file;
+                
+                copyLinkSuccess.classList.add('hidden');
+                copyLinkButton.textContent = 'Copy'; // Reset button text
+                shareLinkInput.value = `https://nimbus.drive/share/${file.id}-${Math.random().toString(36).substring(2, 6)}`;
+                
+                openModal(shareModal);
+            }
+            
+            closeShareModal.addEventListener('click', () => closeModal(shareModal));
+
+            shareModal.addEventListener('click', (e) => {
+                if (e.target === shareModal) {
+                    closeModal(shareModal);
+                }
+            });
+
+            copyLinkButton.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(shareLinkInput.value);
                     copyLinkSuccess.classList.remove('hidden');
                     copyLinkButton.textContent = 'Copied!';
                     setTimeout(() => {
                         copyLinkSuccess.classList.add('hidden');
                         copyLinkButton.textContent = 'Copy';
                     }, 2000);
-                }).catch(err => console.error('Failed to copy text: ', err));
-            });
-            
-            // --- Drag & Drop and Click Upload ---
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                fileWorkspace.addEventListener(eventName, preventDefaults, false);
-            });
-            function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
-
-            ['dragenter', 'dragover'].forEach(eventName => {
-                fileWorkspace.addEventListener(eventName, () => {
-                    dragOverlay.classList.remove('hidden', 'opacity-0');
-                    dragOverlay.classList.add('flex');
-                }, false);
-            });
-            ['dragleave', 'drop'].forEach(eventName => {
-                fileWorkspace.addEventListener(eventName, () => {
-                    dragOverlay.classList.add('hidden', 'opacity-0');
-                    dragOverlay.classList.remove('flex');
-                }, false);
+                } catch (err) {
+                    console.error('Failed to copy: ', err);
+                }
             });
 
-            fileWorkspace.addEventListener('drop', (e) => {
-                handleFiles(e.dataTransfer.files);
-            }, false);
-            
-            uploadButton.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', () => {
-                handleFiles(fileInput.files);
-                fileInput.value = null; // Reset for next upload
+
+            // --- Upload & Drag/Drop Logic (modified for file upload restriction) ---
+            uploadButton.addEventListener('click', () => {
+                // NEW: Restrict click-to-upload
+                if (!uploadButton.disabled) {
+                    fileInput.click();
+                } else {
+                    alert('Files can only be uploaded to "My Files" and its sub-folders.');
+                }
             });
 
-            function handleFiles(files) {
-                if (files.length === 0) return;
-                uploadProgressContainer.classList.remove('hidden', 'translate-y-20', 'opacity-0');
-                uploadList.innerHTML = ''; // Clear previous uploads
-                [...files].forEach(simulateUpload);
-            }
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files);
+                }
+            });
 
-            function simulateUpload(file) {
-                const fileType = file.type.split('/')[0] || 'doc';
-                let fileTypeKey = 'doc';
-                if (['image', 'video', 'pdf'].includes(fileType)) fileTypeKey = fileType;
+            newFolderBtn.addEventListener('click', () => {
+                // NEW: Restrict folder creation
+                if (newFolderBtn.disabled) {
+                    alert('Folders can only be created in "My Files" and its sub-folders.');
+                    return;
+                }
                 
-                const fileTypeIcon = getFileIcon(fileTypeKey, 'w-8 h-8');
-                const uploadItem = document.createElement('div');
-                uploadItem.className = 'flex items-center space-x-3';
-                uploadItem.innerHTML = `
-                    <div class="flex-shrink-0">${fileTypeIcon}</div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">${file.name}</p>
-                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-1">
-                            <div class="progress-bar bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div>
+                const newFolder = { 
+                    id: Date.now(), 
+                    name: "New Folder", 
+                    type: "folder", 
+                    lastModified: new Date().toISOString().split('T')[0], 
+                    size: "0 KB" 
+                };
+                
+                // IMPROVEMENT: Add to front for immediate visibility
+                fileSystem[currentViewId].unshift(newFolder);
+                // Also create an empty entry for the new folder
+                fileSystem[newFolder.id] = []; 
+                
+                renderFiles(currentViewId, searchInput.value);
+                
+                setTimeout(() => initiateRename(newFolder.id), 50);
+            });
+
+            function handleFileUpload(files) {
+                // NEW: Secondary check for upload restriction (covers drag/drop logic too)
+                 if (['shared', 'recents', 'trash'].includes(currentViewId)) {
+                    alert('Files can only be uploaded to "My Files" and its sub-folders.');
+                    return; 
+                 }
+
+                uploadProgressContainer.classList.remove('hidden', 'translate-y-20', 'opacity-0');
+                uploadProgressContainer.classList.add('translate-y-0', 'opacity-100');
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const id = Date.now() + i;
+                    const listItem = document.createElement('div');
+                    listItem.id = `upload-${id}`;
+                    listItem.className = 'flex items-center space-x-2';
+                    listItem.innerHTML = `
+                        <i data-lucide="file" class="w-4 h-4 text-gray-500 flex-shrink-0"></i>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium truncate">${file.name}</p>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-1">
+                                <div id="progress-${id}" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div>
+                            </div>
                         </div>
-                    </div>
-                    <span class="status-icon text-sm text-gray-500">0%</span>
-                `;
-                uploadList.appendChild(uploadItem);
-                lucide.createIcons();
+                        <span id="status-${id}" class="text-xs text-gray-500 flex-shrink-0">0%</span>
+                    `;
+                    uploadList.appendChild(listItem);
+                    
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += 10;
+                        const progressBar = document.getElementById(`progress-${id}`);
+                        const statusText = document.getElementById(`status-${id}`);
+                        if (progressBar) progressBar.style.width = `${progress}%`;
+                        if (statusText) statusText.textContent = `${progress}%`;
 
-                let progress = 0;
-                const progressBar = uploadItem.querySelector('.progress-bar');
-                const statusIcon = uploadItem.querySelector('.status-icon');
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            if (statusText) statusText.textContent = 'Done';
+                            if (progressBar) progressBar.classList.add('bg-green-500');
 
-                const interval = setInterval(() => {
-                    progress += Math.floor(Math.random() * 10) + 5;
-                    if (progress >= 100) {
-                        progress = 100;
-                        clearInterval(interval);
-                        statusIcon.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>`;
-                        lucide.createIcons();
-                        
-                        const newFile = {
-                            id: Date.now(),
-                            name: file.name,
-                            type: 'file',
-                            fileType: fileTypeKey,
-                            lastModified: new Date().toISOString().split('T')[0],
-                            size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`
-                        };
-                        
-                        // Add to current folder
-                        const currentFolderId = breadcrumbStack.at(-1).id;
-                        // Only add if we're in a 'My Files' folder
-                        if (fileSystem[currentFolderId]) {
-                            fileSystem[currentFolderId].unshift(newFile);
-                            filterAndRenderFiles();
+                            const newFile = { 
+                                id: id, 
+                                name: file.name, 
+                                type: "file", 
+                                // Simple file type detection, can be improved
+                                fileType: file.name.includes('.') ? file.name.split('.').pop().toLowerCase() : 'file', 
+                                lastModified: new Date().toISOString().split('T')[0], 
+                                size: (file.size / 1024 / 1024).toFixed(2) + ' MB'
+                            };
+                            
+                            fileSystem[currentViewId].unshift(newFile); // IMPROVEMENT: Add to front
+                            renderFiles(currentViewId, searchInput.value);
                         }
-                    } else {
-                        statusIcon.textContent = `${progress}%`;
-                    }
-                    progressBar.style.width = `${progress}%`;
-                }, 200);
+                    }, 200);
+                }
+
+                lucide.createIcons();
             }
-            
+
             closeUploadProgress.addEventListener('click', () => {
                 uploadProgressContainer.classList.add('translate-y-20', 'opacity-0');
-                setTimeout(() => uploadProgressContainer.classList.add('hidden'), 200);
+                setTimeout(() => {
+                    uploadProgressContainer.classList.add('hidden');
+                    uploadList.innerHTML = '';
+                }, 200);
             });
-            
-            // --- Search & Main Render Function ---
-            function filterAndRenderFiles() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const currentFolderId = breadcrumbStack.at(-1).id;
-                let filesToShow = fileSystem[currentFolderId] || [];
-                
-                if (searchTerm.trim() !== '') {
-                    filesToShow = filesToShow.filter(file => 
-                        file.name.toLowerCase().includes(searchTerm)
-                    );
-                }
-                
-                renderFiles(filesToShow);
-                renderBreadcrumbs();
-            }
-            searchInput.addEventListener('input', filterAndRenderFiles);
 
-            // --- View Toggle ---
-            function setView(view) { // 'grid' or 'list'
-                currentView = view;
+            // Drag and Drop implementation (existing, but calls modified handleFileUpload)
+            fileWorkspace.addEventListener('dragenter', (e) => {
+                e.preventDefault();
+                // NEW: Restrict drag/drop visually
+                if (['shared', 'recents', 'trash'].includes(currentViewId)) return;
                 
-                // Active classes
-                const activeClasses = ['bg-white', 'dark:bg-gray-800', 'text-blue-600', 'dark:text-blue-400', 'shadow-sm'];
-                // Inactive classes
-                const inactiveClasses = ['text-gray-500', 'dark:text-gray-400', 'hover:text-gray-700', 'dark:hover:text-white'];
-                
-                if (view === 'grid') {
-                    if (emptyState.classList.contains('hidden')) { // Only show if not empty
-                        fileGrid.classList.remove('hidden');
+                dragOverlay.classList.remove('hidden');
+                setTimeout(() => dragOverlay.classList.add('opacity-100', 'flex'), 10);
+            });
+
+            dragOverlay.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            dragOverlay.addEventListener('dragleave', (e) => {
+                if (e.target === dragOverlay) {
+                    dragOverlay.classList.remove('opacity-100', 'flex');
+                    setTimeout(() => dragOverlay.classList.add('hidden'), 200);
+                }
+            });
+
+            dragOverlay.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dragOverlay.classList.remove('opacity-100', 'flex');
+                setTimeout(() => dragOverlay.classList.add('hidden'), 200);
+
+                if (e.dataTransfer.items) {
+                    const files = [];
+                    for (let i = 0; i < e.dataTransfer.items.length; i++) {
+                        if (e.dataTransfer.items[i].kind === 'file') {
+                            files.push(e.dataTransfer.items[i].getAsFile());
+                        }
                     }
-                    fileList.classList.add('hidden');
-                    
-                    viewToggleGrid.classList.add(...activeClasses);
-                    viewToggleGrid.classList.remove(...inactiveClasses);
-                    
-                    viewToggleList.classList.add(...inactiveClasses);
-                    viewToggleList.classList.remove(...activeClasses);
-                    
-                } else { // 'list'
-                    fileGrid.classList.add('hidden');
-                    if (emptyState.classList.contains('hidden')) { // Only show if not empty
-                        fileList.classList.remove('hidden');
+                    if (files.length > 0) {
+                        handleFileUpload(files);
                     }
-                    
-                    viewToggleList.classList.add(...activeClasses);
-                    viewToggleList.classList.remove(...inactiveClasses);
-                    
-                    viewToggleGrid.classList.add(...inactiveClasses);
-                    viewToggleGrid.classList.remove(...activeClasses);
                 }
-            }
-            viewToggleGrid.addEventListener('click', () => setView('grid'));
-            viewToggleList.addEventListener('click', () => setView('list'));
-            
-            // --- Mobile Sidebar ---
-            function toggleSidebar(show) {
-                if (show) {
-                    sidebar.classList.remove('-translate-x-full');
-                    sidebarBackdrop.classList.remove('hidden');
-                } else {
-                    sidebar.classList.add('-translate-x-full');
-                    sidebarBackdrop.classList.add('hidden');
-                }
-            }
-            mobileMenuButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                // Check if sidebar is currently hidden
-                const isSidebarHidden = sidebar.classList.contains('-translate-x-full');
-                toggleSidebar(isSidebarHidden); // If it's hidden, show it (true). If it's not hidden, hide it (false).
             });
-            sidebarBackdrop.addEventListener('click', () => toggleSidebar(false));
 
-            // --- Sidebar Navigation ---
-            function updateActiveNav(activeId) {
-                document.querySelectorAll('#sidebar-nav .nav-link').forEach(link => {
-                    link.classList.remove('nav-link-active');
-                    link.classList.add('nav-link-inactive', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
-                });
-                
-                const activeLink = document.getElementById(activeId);
-                if (activeLink) {
-                    activeLink.classList.add('nav-link-active');
-                    activeLink.classList.remove('nav-link-inactive', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
-                }
-            }
-            
-            document.getElementById('nav-my-files').addEventListener('click', (e) => {
-                e.preventDefault();
-                breadcrumbStack = [{ id: 'root', name: 'My Files' }];
-                filterAndRenderFiles();
-                updateActiveNav('nav-my-files');
-                toggleSidebar(false); // Close mobile sidebar on nav
-            });
-            
-            document.getElementById('nav-shared').addEventListener('click', (e) => {
-                e.preventDefault();
-                breadcrumbStack = [{ id: 'shared', name: 'Shared with Me' }];
-                filterAndRenderFiles();
-                updateActiveNav('nav-shared');
-                toggleSidebar(false);
-            });
-            
-            document.getElementById('nav-recents').addEventListener('click', (e) => {
-                e.preventDefault();
-                breadcrumbStack = [{ id: 'recents', name: 'Recents' }];
-                filterAndRenderFiles();
-                updateActiveNav('nav-recents');
-                toggleSidebar(false);
-            });
-            
-            document.getElementById('nav-trash').addEventListener('click', (e) => {
-                e.preventDefault();
-                breadcrumbStack = [{ id: 'trash', name: 'Trash' }];
-                filterAndRenderFiles();
-                updateActiveNav('nav-trash');
-                toggleSidebar(false);
-            });
-            
-            // New Folder button (creates folder in current breadcrumb folder)
-            const newFolderBtnEl = document.getElementById('new-folder-btn');
-            newFolderBtnEl?.addEventListener('click', (e) => {
-                e.preventDefault();
-                const currentFolderId = breadcrumbStack.at(-1).id;
-                const newFolder = {
-                    id: Date.now(),
-                    name: "New Folder",
-                    type: "folder",
-                    lastModified: new Date().toISOString().split('T')[0],
-                    size: "0 MB"
-                };
-                if (!fileSystem[currentFolderId]) fileSystem[currentFolderId] = [];
-                fileSystem[currentFolderId].unshift(newFolder);
-                filterAndRenderFiles();
-            });
-            
-            // --- Download Function ---
-            function downloadFile(file) {
-                if (!file || file.type === 'folder') return;
-                
-                // This is a simulation. In a real app, this would be a link to a download endpoint.
-                // We'll simulate by creating a fake text file.
-                const blob = new Blob([`Simulated download for: ${file.name}`], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = file.name;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }
 
-            // --- Initial Render ---
-            updateActiveNav('nav-my-files'); // Set initial active link
-            filterAndRenderFiles(); // Initial render
-            setView('grid'); // Set initial view
-            
-            // --- Initialize Lucide Icons ---
-            lucide.createIcons();
+            // --- Initialization (existing) ---
+            navigateTo('root', 'My Files', 'nav');
         });
     </script>
-
 </body>
 </html>
-
