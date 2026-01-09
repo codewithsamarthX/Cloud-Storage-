@@ -271,6 +271,165 @@
             border-radius: 50%;
             z-index: 1;
         }
+
+        /* New advanced styles */
+        
+        /* AI suggestion badge */
+        .ai-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        
+        /* Live collaboration indicator */
+        .live-indicator {
+            position: relative;
+        }
+        .live-indicator::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            background-color: #10b981;
+            border: 2px solid white;
+            border-radius: 50%;
+            z-index: 1;
+            animation: pulse-dot 2s infinite;
+        }
+        .dark .live-indicator::before {
+            border-color: #1f2937;
+        }
+        @keyframes pulse-dot {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        
+        /* Security level indicator */
+        .security-high {
+            color: #10b981;
+        }
+        .security-medium {
+            color: #f59e0b;
+        }
+        .security-low {
+            color: #ef4444;
+        }
+        
+        /* Analytics chart */
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+        
+        /* Activity feed item */
+        .activity-item {
+            position: relative;
+            padding-left: 32px;
+            margin-bottom: 16px;
+        }
+        .activity-item:last-child {
+            margin-bottom: 0;
+        }
+        .activity-icon {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Workflow automation toggle */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: #3b82f6;
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+        
+        /* Comment thread */
+        .comment-thread {
+            border-left: 2px solid #e5e7eb;
+            padding-left: 16px;
+            margin-left: 8px;
+        }
+        .dark .comment-thread {
+            border-left-color: #4b5563;
+        }
+        
+        /* Annotation marker */
+        .annotation-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(59, 130, 246, 0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        /* AI search suggestions */
+        .ai-suggestion {
+            background: linear-gradient(to right, #f3f4f6, #e5e7eb);
+            border-left: 3px solid #8b5cf6;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 0 4px 4px 0;
+        }
+        .dark .ai-suggestion {
+            background: linear-gradient(to right, #374151, #4b5563);
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased overflow-hidden">
@@ -295,7 +454,13 @@
                 </div>
                 <div class="ml-3">
                     <span class="font-bold text-xl text-gray-900 dark:text-white">NimbusDrive</span>
-                    <span class="text-xs text-green-600 dark:text-green-400 block font-medium">Synced • Online</span>
+                    <div class="flex items-center">
+                        <span class="text-xs text-green-600 dark:text-green-400 block font-medium">Synced • Online</span>
+                        <div class="ml-2 ai-badge">
+                            <i data-lucide="sparkles" class="w-3 h-3 mr-1"></i>
+                            AI Enhanced
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -313,6 +478,12 @@
                     <button id="scan-documents-btn" class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg font-medium transition-colors flex items-center justify-center">
                         <i data-lucide="scanner" class="w-4 h-4 mr-2"></i>
                         Scan
+                    </button>
+                </div>
+                <div class="mt-3">
+                    <button id="ai-organize-btn" class="w-full px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center">
+                        <i data-lucide="sparkles" class="w-4 h-4 mr-2"></i>
+                        AI Organize
                     </button>
                 </div>
             </div>
@@ -352,6 +523,13 @@
                         <i data-lucide="users" class="w-3 h-3 text-white"></i>
                     </div>
                     Team Projects
+                    <div class="ml-auto flex -space-x-2">
+                        <img class="w-5 h-5 rounded-full border border-white dark:border-gray-800" src="https://placehold.co/20x20/60A5FA/FFF?text=AJ" alt="User">
+                        <img class="w-5 h-5 rounded-full border border-white dark:border-gray-800" src="https://placehold.co/20x20/8B5CF6/FFF?text=MB" alt="User">
+                        <div class="w-5 h-5 rounded-full bg-gray-300 dark:bg-gray-600 border border-white dark:border-gray-800 flex items-center justify-center">
+                            <span class="text-xs">+2</span>
+                        </div>
+                    </div>
                 </a>
                 <a href="#" id="nav-personal" class="nav-link flex items-center px-4 py-3 rounded-lg transition-all">
                     <div class="w-5 h-5 mr-3 rounded bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
@@ -364,6 +542,24 @@
                         <i data-lucide="archive" class="w-3 h-3 text-white"></i>
                     </div>
                     Archive
+                </a>
+                
+                <div class="pt-6 pb-2 px-4">
+                    <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Advanced</h3>
+                </div>
+                
+                <a href="#" id="nav-analytics" class="nav-link flex items-center px-4 py-3 rounded-lg transition-all">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5 mr-3"></i>
+                    Analytics
+                </a>
+                <a href="#" id="nav-automation" class="nav-link flex items-center px-4 py-3 rounded-lg transition-all">
+                    <i data-lucide="zap" class="w-5 h-5 mr-3"></i>
+                    Automation
+                </a>
+                <a href="#" id="nav-security" class="nav-link flex items-center px-4 py-3 rounded-lg transition-all">
+                    <i data-lucide="shield" class="w-5 h-5 mr-3"></i>
+                    Security
+                    <div class="ml-auto w-2 h-2 bg-green-500 rounded-full"></div>
                 </a>
             </nav>
 
@@ -386,14 +582,22 @@
 
             <!-- User Profile -->
             <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex items-center">
-                <img class="w-9 h-9 rounded-full ring-2 ring-gray-300 dark:ring-gray-600" src="https://placehold.co/40x40/60A5FA/FFF?text=AJ" alt="User profile">
+                <div class="relative">
+                    <img class="w-9 h-9 rounded-full ring-2 ring-gray-300 dark:ring-gray-600" src="https://placehold.co/40x40/60A5FA/FFF?text=AJ" alt="User profile">
+                    <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
+                </div>
                 <div class="ml-3">
                     <p class="text-sm font-semibold text-gray-900 dark:text-white">Alex Johnson</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400">alex@nimbusdrive.com</p>
                 </div>
-                <button id="user-menu-btn" class="ml-auto p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500"></i>
-                </button>
+                <div class="ml-auto flex items-center space-x-1">
+                    <div class="security-high">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                    </div>
+                    <button id="user-menu-btn" class="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500"></i>
+                    </button>
+                </div>
             </div>
         </aside>
         
@@ -419,10 +623,41 @@
 
                 <!-- Header Right Section -->
                 <div class="flex items-center space-x-4">
+                    <!-- AI Search -->
+                    <div class="relative">
+                        <input type="text" id="ai-search" placeholder="AI-powered search..." class="w-64 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none border border-gray-300 dark:border-gray-600 focus:border-blue-500 pr-10">
+                        <button id="ai-search-btn" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        </button>
+                        <!-- AI Search Suggestions -->
+                        <div id="ai-search-suggestions" class="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20 hidden">
+                            <div class="p-2">
+                                <div class="ai-suggestion text-sm text-gray-700 dark:text-gray-300">
+                                    <i data-lucide="clock" class="w-3 h-3 inline mr-1"></i>
+                                    Recent: "Marketing Brief"
+                                </div>
+                                <div class="ai-suggestion text-sm text-gray-700 dark:text-gray-300">
+                                    <i data-lucide="trending-up" class="w-3 h-3 inline mr-1"></i>
+                                    Trending: "Q4 Reports"
+                                </div>
+                                <div class="ai-suggestion text-sm text-gray-700 dark:text-gray-300">
+                                    <i data-lucide="users" class="w-3 h-3 inline mr-1"></i>
+                                    Shared with you: "Project Alpha"
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Advanced Search Toggle -->
                     <button id="advanced-search-toggle" class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 relative">
                         <i data-lucide="filter" class="w-5 h-5"></i>
                         <span class="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full"></span>
+                    </button>
+                    
+                    <!-- Live Collaboration -->
+                    <button id="collaboration-btn" class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 relative">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                        <span class="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full"></span>
                     </button>
                     
                     <!-- Notifications -->
@@ -553,6 +788,9 @@
                         <button id="refresh-btn" class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
                             <i data-lucide="refresh-cw" class="w-5 h-5"></i>
                         </button>
+                        <button id="activity-btn" class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <i data-lucide="activity" class="w-5 h-5"></i>
+                        </button>
                         <button id="more-actions-btn" class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
                             <i data-lucide="more-vertical" class="w-5 h-5"></i>
                         </button>
@@ -569,10 +807,11 @@
                     <!-- Header -->
                     <div class="file-list-header grid grid-cols-12 gap-4 px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 uppercase">
                         <div class="col-span-1"></div>
-                        <div class="col-span-5">Name</div>
+                        <div class="col-span-4">Name</div>
                         <div class="col-span-2">Last Modified</div>
                         <div class="col-span-2">File Size</div>
                         <div class="col-span-2">Shared With</div>
+                        <div class="col-span-1">Security</div>
                     </div>
                     <!-- List Body -->
                     <div id="file-list-body">
@@ -657,6 +896,19 @@
             Share
             <span class="ml-auto badge bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">New</span>
         </a>
+        <a href="#" id="context-collaborate" class="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <i data-lucide="users" class="w-4 h-4 mr-3"></i>
+            Collaborate
+            <span class="ml-auto badge bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">Live</span>
+        </a>
+        <a href="#" id="context-comment" class="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <i data-lucide="message-circle" class="w-4 h-4 mr-3"></i>
+            Add Comment
+        </a>
+        <a href="#" id="context-annotate" class="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <i data-lucide="edit-3" class="w-4 h-4 mr-3"></i>
+            Annotate
+        </a>
         <a href="#" id="context-star" class="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
             <i data-lucide="star" class="w-4 h-4 mr-3"></i>
             Add to Starred
@@ -678,6 +930,13 @@
         </a>
         <a href="#" id="context-move" class="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
             <i data-lucide="arrow-right-circle" class="w-4 h-4 mr-3"></i> Move To...
+        </a>
+        <div class="my-1 border-t border-gray-200 dark:border-gray-700"></div>
+        <a href="#" id="context-encrypt" class="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <i data-lucide="lock" class="w-4 h-4 mr-3"></i> Encrypt
+        </a>
+        <a href="#" id="context-sign" class="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <i data-lucide="file-signature" class="w-4 h-4 mr-3"></i> Digital Signature
         </a>
         <div class="my-1 border-t border-gray-200 dark:border-gray-700"></div>
         <a href="#" id="context-restore" class="flex items-center px-4 py-3 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 hidden">
@@ -705,6 +964,12 @@
                     <button class="p-2 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
                         <i data-lucide="star" class="w-5 h-5"></i>
                     </button>
+                    <button id="preview-annotation-btn" class="p-2 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <i data-lucide="edit-3" class="w-5 h-5"></i>
+                    </button>
+                    <button id="preview-comment-btn" class="p-2 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <i data-lucide="message-circle" class="w-5 h-5"></i>
+                    </button>
                     <button class="p-2 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
                         <i data-lucide="more-vertical" class="w-5 h-5"></i>
                     </button>
@@ -716,12 +981,37 @@
             <!-- Modal Content -->
             <div class="flex flex-col md:flex-row h-[calc(90vh-10rem)]">
                 <!-- Preview Area -->
-                <div class="flex-1 p-6 flex items-center justify-center overflow-auto bg-gray-50 dark:bg-gray-900">
+                <div class="flex-1 p-6 flex items-center justify-center overflow-auto bg-gray-50 dark:bg-gray-900 relative">
                     <img id="preview-image" src="https://placehold.co/800x600/e2e8f0/94a3b8?text=File+Preview" alt="File preview" class="max-w-full max-h-full object-contain rounded-lg shadow-lg">
                     <div id="preview-other" class="hidden text-center text-gray-500 p-8">
                         <div id="preview-other-icon" class="w-32 h-32 mx-auto mb-6 text-gray-400"></div>
                         <p class="text-xl mb-2">Preview not available for this file type.</p>
                         <p class="text-gray-400">You can still download or share this file.</p>
+                    </div>
+                    <!-- Annotation Markers -->
+                    <div id="annotation-markers" class="hidden">
+                        <!-- Annotation markers will be injected here -->
+                    </div>
+                    <!-- Comments Panel -->
+                    <div id="comments-panel" class="hidden absolute right-0 top-0 h-full w-80 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 p-4 overflow-y-auto">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Comments</h3>
+                            <button id="close-comments-panel" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                                <i data-lucide="x" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <div class="mb-4">
+                            <div class="flex space-x-2">
+                                <img class="w-8 h-8 rounded-full" src="https://placehold.co/32x32/60A5FA/FFF?text=AJ" alt="User">
+                                <div class="flex-1">
+                                    <textarea placeholder="Add a comment..." class="w-full bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none border border-gray-300 dark:border-gray-600 focus:border-blue-500 resize-none" rows="3"></textarea>
+                                    <button class="mt-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg">Post</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="comments-list" class="space-y-4">
+                            <!-- Comments will be injected here -->
+                        </div>
                     </div>
                 </div>
                 <!-- Details Panel -->
@@ -749,6 +1039,15 @@
                             <p class="font-medium truncate" id="detail-location">/My Files/Project Alpha</p>
                         </div>
                         <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Security</p>
+                            <div class="flex items-center mt-1">
+                                <div class="security-high mr-2">
+                                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                                </div>
+                                <span class="text-sm">Encrypted with AES-256</span>
+                            </div>
+                        </div>
+                        <div>
                             <p class="text-sm text-gray-500 dark:text-gray-400">Shared with</p>
                             <div class="flex items-center mt-1">
                                 <div class="flex -space-x-2">
@@ -757,6 +1056,20 @@
                                     <img class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800" src="https://placehold.co/32x32/10B981/FFF?text=SK" alt="User">
                                 </div>
                                 <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">+2 others</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Active Collaborators</p>
+                            <div class="flex items-center mt-1">
+                                <div class="flex -space-x-2">
+                                    <div class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800 bg-green-100 flex items-center justify-center">
+                                        <span class="text-xs font-medium text-green-800">AJ</span>
+                                    </div>
+                                    <div class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800 bg-blue-100 flex items-center justify-center">
+                                        <span class="text-xs font-medium text-blue-800">MB</span>
+                                    </div>
+                                </div>
+                                <span class="ml-2 text-sm text-green-600 dark:text-green-400">2 viewing now</span>
                             </div>
                         </div>
                     </div>
@@ -769,6 +1082,25 @@
                             <button id="share-button-modal" class="px-4 py-2.5 rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 font-medium transition-colors flex items-center justify-center">
                                 <i data-lucide="share-2" class="w-4 h-4 mr-2"></i> Share
                             </button>
+                            <button id="collaborate-button-modal" class="px-4 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 font-medium transition-colors flex items-center justify-center">
+                                <i data-lucide="users" class="w-4 h-4 mr-2"></i> Collaborate
+                            </button>
+                            <button id="encrypt-button-modal" class="px-4 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 font-medium transition-colors flex items-center justify-center">
+                                <i data-lucide="lock" class="w-4 h-4 mr-2"></i> Encrypt
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <h4 class="font-semibold text-gray-900 dark:text-white mb-3">AI Insights</h4>
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg p-4">
+                            <div class="flex items-start">
+                                <i data-lucide="sparkles" class="w-5 h-5 text-purple-600 dark:text-purple-400 mr-2 mt-0.5"></i>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Content Analysis</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">This image contains a product mockup with text elements. Similar files found in "Design Assets" folder.</p>
+                                    <button class="text-xs text-purple-600 dark:text-purple-400 hover:underline mt-2">View related files</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -844,12 +1176,44 @@
                             Copy
                         </button>
                     </div>
-                    <div class="mt-3 flex items-center">
-                        <input type="checkbox" id="link-expiry" class="rounded text-blue-600 focus:ring-blue-500">
-                        <label for="link-expiry" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Set expiration date</label>
-                        <input type="date" class="ml-auto text-sm border rounded-lg px-2 py-1 hidden" id="expiry-date">
+                    <div class="mt-3 space-y-2">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="link-expiry" class="rounded text-blue-600 focus:ring-blue-500">
+                            <label for="link-expiry" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Set expiration date</label>
+                            <input type="date" class="ml-auto text-sm border rounded-lg px-2 py-1 hidden" id="expiry-date">
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="link-password" class="rounded text-blue-600 focus:ring-blue-500">
+                            <label for="link-password" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Password protect</label>
+                            <input type="password" placeholder="Enter password" class="ml-auto text-sm border rounded-lg px-2 py-1 hidden" id="link-password-input">
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="download-limit" class="rounded text-blue-600 focus:ring-blue-500">
+                            <label for="download-limit" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Limit downloads</label>
+                            <input type="number" min="1" value="5" class="ml-auto text-sm border rounded-lg px-2 py-1 w-16 hidden" id="download-limit-input">
+                        </div>
                     </div>
                     <span id="copy-link-success" class="text-green-600 dark:text-green-400 text-sm mt-2 hidden">Link copied to clipboard!</span>
+                </div>
+                
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Advanced Security</label>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="watermark" class="rounded text-blue-600 focus:ring-blue-500">
+                            <label for="watermark" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Add watermark</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="disable-download" class="rounded text-blue-600 focus:ring-blue-500">
+                            <label for="disable-download" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Disable downloading</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="track-views" class="rounded text-blue-600 focus:ring-blue-500">
+                            <label for="track-views" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Track views and downloads</label>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="flex justify-between">
@@ -899,6 +1263,447 @@
                                 </div>
                             </div>
                             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Added Q4 projections and updated executive summary.</p>
+                            <div class="mt-2 flex items-center space-x-4">
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <i data-lucide="file-text" class="w-3 h-3 mr-1"></i>
+                                    12 pages
+                                </div>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <i data-lucide="hard-drive" class="w-3 h-3 mr-1"></i>
+                                    2.4 MB
+                                </div>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <i data-lucide="git-branch" class="w-3 h-3 mr-1"></i>
+                                    3 changes
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Modal -->
+    <div id="analytics-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/70 items-center justify-center p-6 modal-hidden backdrop-blur-sm">
+        <div class="modal-content w-full max-w-5xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden modal-content-hidden">
+            <!-- Modal Header -->
+            <div class="h-20 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Storage Analytics</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Insights about your storage usage and activity</p>
+                </div>
+                <button id="close-analytics-modal" class="p-2 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 -mr-2">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <!-- Modal Content -->
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-medium text-gray-900 dark:text-white">Storage Used</h4>
+                            <i data-lucide="hard-drive" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                        </div>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white mb-1">9.2 GB</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">45% of 20 GB</p>
+                        <div class="mt-3 w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-medium text-gray-900 dark:text-white">Files Shared</h4>
+                            <i data-lucide="share-2" class="w-5 h-5 text-green-600 dark:text-green-400"></i>
+                        </div>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white mb-1">23</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">+5 this week</p>
+                        <div class="mt-3 flex items-center text-xs text-green-600 dark:text-green-400">
+                            <i data-lucide="trending-up" class="w-3 h-3 mr-1"></i>
+                            12% increase from last month
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-medium text-gray-900 dark:text-white">Collaborators</h4>
+                            <i data-lucide="users" class="w-5 h-5 text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white mb-1">8</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Active this month</p>
+                        <div class="mt-3 flex -space-x-2">
+                            <img class="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800" src="https://placehold.co/24x24/60A5FA/FFF?text=AJ" alt="User">
+                            <img class="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800" src="https://placehold.co/24x24/8B5CF6/FFF?text=MB" alt="User">
+                            <img class="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800" src="https://placehold.co/24x24/10B981/FFF?text=SK" alt="User">
+                            <div class="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 border-2 border-white dark:border-gray-800 flex items-center justify-center">
+                                <span class="text-xs">+5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
+                        <h4 class="font-medium text-gray-900 dark:text-white mb-4">File Type Distribution</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-gray-600 dark:text-gray-400">Documents</span>
+                                    <span class="font-medium text-gray-900 dark:text-white">35%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                    <div class="bg-blue-600 h-2 rounded-full" style="width: 35%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-gray-600 dark:text-gray-400">Images</span>
+                                    <span class="font-medium text-gray-900 dark:text-white">25%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                    <div class="bg-green-600 h-2 rounded-full" style="width: 25%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-gray-600 dark:text-gray-400">Videos</span>
+                                    <span class="font-medium text-gray-900 dark:text-white">20%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                    <div class="bg-purple-600 h-2 rounded-full" style="width: 20%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-gray-600 dark:text-gray-400">Other</span>
+                                    <span class="font-medium text-gray-900 dark:text-white">20%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                    <div class="bg-gray-600 h-2 rounded-full" style="width: 20%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
+                        <h4 class="font-medium text-gray-900 dark:text-white mb-4">Recent Activity</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i data-lucide="upload" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">3 files uploaded</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">2 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i data-lucide="share-2" class="w-4 h-4 text-green-600 dark:text-green-400"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Shared "Project Alpha" with team</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Yesterday</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i data-lucide="users" class="w-4 h-4 text-purple-600 dark:text-purple-400"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Maria joined your workspace</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">3 days ago</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Automation Modal -->
+    <div id="automation-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/70 items-center justify-center p-6 modal-hidden backdrop-blur-sm">
+        <div class="modal-content w-full max-w-3xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden modal-content-hidden">
+            <!-- Modal Header -->
+            <div class="h-20 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Workflow Automation</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Set up rules to automate your file management</p>
+                </div>
+                <button id="close-automation-modal" class="p-2 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 -mr-2">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <!-- Modal Content -->
+            <div class="p-6">
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="font-medium text-gray-900 dark:text-white">Active Automations</h4>
+                        <button id="add-automation-btn" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg flex items-center">
+                            <i data-lucide="plus" class="w-4 h-4 mr-1"></i>
+                            Add Rule
+                        </button>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <div class="flex items-center mb-2">
+                                        <i data-lucide="image" class="w-4 h-4 text-blue-600 dark:text-blue-400 mr-2"></i>
+                                        <h5 class="font-medium text-gray-900 dark:text-white">Organize Images by Date</h5>
+                                    </div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">When images are uploaded, move them to folders organized by date</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <div class="flex items-center mb-2">
+                                        <i data-lucide="file-text" class="w-4 h-4 text-green-600 dark:text-green-400 mr-2"></i>
+                                        <h5 class="font-medium text-gray-900 dark:text-white">Tag Documents</h5>
+                                    </div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Automatically tag documents based on content using AI</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <div class="flex items-center mb-2">
+                                        <i data-lucide="trash-2" class="w-4 h-4 text-red-600 dark:text-red-400 mr-2"></i>
+                                        <h5 class="font-medium text-gray-900 dark:text-white">Clean Up Trash</h5>
+                                    </div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Permanently delete items in trash after 30 days</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg p-4">
+                    <div class="flex items-start">
+                        <i data-lucide="zap" class="w-5 h-5 text-purple-600 dark:text-purple-400 mr-2 mt-0.5"></i>
+                        <div>
+                            <h5 class="font-medium text-gray-900 dark:text-white mb-1">AI-Powered Suggestions</h5>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Based on your usage patterns, we recommend these automations:</p>
+                            <div class="space-y-2">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="ai-suggestion-1" class="rounded text-purple-600 focus:ring-purple-500 mr-2">
+                                    <label for="ai-suggestion-1" class="text-sm text-gray-700 dark:text-gray-300">Move large videos (>100MB) to "Archive" folder after 6 months</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="ai-suggestion-2" class="rounded text-purple-600 focus:ring-purple-500 mr-2">
+                                    <label for="ai-suggestion-2" class="text-sm text-gray-700 dark:text-gray-300">Create backup of important documents to external storage weekly</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="ai-suggestion-3" class="rounded text-purple-600 focus:ring-purple-500 mr-2">
+                                    <label for="ai-suggestion-3" class="text-sm text-gray-700 dark:text-gray-300">Notify team when new files are added to shared folders</label>
+                                </div>
+                            </div>
+                            <button class="mt-3 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg">
+                                Apply Selected
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Feed Modal -->
+    <div id="activity-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/70 items-center justify-center p-6 modal-hidden backdrop-blur-sm">
+        <div class="modal-content w-full max-w-2xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden modal-content-hidden">
+            <!-- Modal Header -->
+            <div class="h-20 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Activity Feed</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Recent activity across your workspace</p>
+                </div>
+                <button id="close-activity-modal" class="p-2 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 -mr-2">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <!-- Modal Content -->
+            <div class="p-6 max-h-[70vh] overflow-y-auto">
+                <div class="space-y-4">
+                    <div class="activity-item">
+                        <div class="activity-icon bg-blue-100 dark:bg-blue-900">
+                            <i data-lucide="upload" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">You uploaded 3 files</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">2 hours ago</p>
+                            <div class="mt-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
+                                <div class="flex items-center">
+                                    <i data-lucide="file-text" class="w-4 h-4 text-gray-500 dark:text-gray-400 mr-2"></i>
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Marketing_Brief.pdf</span>
+                                </div>
+                                <div class="flex items-center mt-1">
+                                    <i data-lucide="image" class="w-4 h-4 text-gray-500 dark:text-gray-400 mr-2"></i>
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Website-Hero.jpg</span>
+                                </div>
+                                <div class="flex items-center mt-1">
+                                    <i data-lucide="file-text" class="w-4 h-4 text-gray-500 dark:text-gray-400 mr-2"></i>
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Q4_Report.docx</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon bg-green-100 dark:bg-green-900">
+                            <i data-lucide="share-2" class="w-4 h-4 text-green-600 dark:text-green-400"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">Maria shared "Project Alpha" with you</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Yesterday at 3:45 PM</p>
+                            <div class="mt-2 flex items-center">
+                                <button class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg mr-2">
+                                    View Folder
+                                </button>
+                                <button class="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-lg">
+                                    Thank Maria
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon bg-purple-100 dark:bg-purple-900">
+                            <i data-lucide="message-circle" class="w-4 h-4 text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">John commented on "Design System"</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">2 days ago</p>
+                            <div class="mt-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-3">
+                                <p class="text-sm text-gray-700 dark:text-gray-300">"Great work on the color palette! I think we should also consider adding a dark mode variant."</p>
+                                <div class="mt-2 flex items-center">
+                                    <button class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Reply</button>
+                                    <span class="mx-2 text-gray-400">•</span>
+                                    <button class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Like</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon bg-amber-100 dark:bg-amber-900">
+                            <i data-lucide="edit-3" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">You edited "Marketing_Brief.pdf"</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">3 days ago</p>
+                            <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                <p>Changes made:</p>
+                                <ul class="list-disc list-inside mt-1">
+                                    <li>Updated executive summary</li>
+                                    <li>Added Q4 projections</li>
+                                    <li>Revised budget figures</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collaboration Modal -->
+    <div id="collaboration-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/70 items-center justify-center p-6 modal-hidden backdrop-blur-sm">
+        <div class="modal-content w-full max-w-3xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden modal-content-hidden">
+            <!-- Modal Header -->
+            <div class="h-20 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Real-time Collaboration</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400" id="collaboration-filename">Marketing_Brief.pdf</p>
+                </div>
+                <button id="close-collaboration-modal" class="p-2 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 -mr-2">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <!-- Modal Content -->
+            <div class="p-6">
+                <div class="mb-6">
+                    <h4 class="font-medium text-gray-900 dark:text-white mb-4">Active Collaborators</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div class="relative">
+                                <img class="w-10 h-10 rounded-full" src="https://placehold.co/40x40/60A5FA/FFF?text=AJ" alt="User">
+                                <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="font-medium text-gray-900 dark:text-white">You</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Owner • Editing now</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div class="relative">
+                                <img class="w-10 h-10 rounded-full" src="https://placehold.co/40x40/8B5CF6/FFF?text=MB" alt="User">
+                                <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="font-medium text-gray-900 dark:text-white">Maria Brown</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Can edit • Viewing page 3</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h4 class="font-medium text-gray-900 dark:text-white mb-4">Collaboration Tools</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <button class="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg flex flex-col items-center">
+                            <i data-lucide="video" class="w-5 h-5 text-gray-700 dark:text-gray-300 mb-2"></i>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Video Call</span>
+                        </button>
+                        <button class="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg flex flex-col items-center">
+                            <i data-lucide="message-square" class="w-5 h-5 text-gray-700 dark:text-gray-300 mb-2"></i>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Chat</span>
+                        </button>
+                        <button class="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg flex flex-col items-center">
+                            <i data-lucide="edit-3" class="w-5 h-5 text-gray-700 dark:text-gray-300 mb-2"></i>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Track Changes</span>
+                        </button>
+                        <button class="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg flex flex-col items-center">
+                            <i data-lucide="users" class="w-5 h-5 text-gray-700 dark:text-gray-300 mb-2"></i>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Assign Tasks</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-medium text-gray-900 dark:text-white mb-4">Version History</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i data-lucide="save" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">You saved changes</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Just now</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i data-lucide="save" class="w-4 h-4 text-purple-600 dark:text-purple-400"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Maria saved changes</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">5 minutes ago</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -945,6 +1750,10 @@
             <i data-lucide="link" class="w-4 h-4 mr-3"></i>
             Create Shared Link
         </a>
+        <a href="#" class="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+            <i data-lucide="sparkles" class="w-4 h-4 mr-3"></i>
+            AI Organize
+        </a>
     </div>
 
     <!-- Notification Panel -->
@@ -967,6 +1776,32 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-gray-900 dark:text-white">Maria shared a folder with you</p>
                         <p class="text-xs text-gray-500 dark:text-gray-400">Project Alpha • Just now</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-green-600 dark:text-green-400"></i>
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">File backup completed</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">12 files backed up • 1 hour ago</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">AI organized your files</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">23 files categorized • Yesterday</p>
                     </div>
                 </div>
             </div>
@@ -995,43 +1830,43 @@
         // --- Advanced Mock File Data Store ---
         const fileSystem = {
             'root': [
-                { id: 1, name: "Project Alpha", type: "folder", lastModified: "2025-11-16", size: "1.2 GB", starred: true, shared: true, tags: ["project", "work"] },
-                { id: 6, name: "Branding", type: "folder", lastModified: "2025-11-10", size: "450 MB", shared: true, tags: ["design"] },
-                { id: 9, name: "Design System", type: "folder", lastModified: "2025-11-08", size: "88 MB", starred: true, tags: ["design", "ui"] },
-                { id: 2, name: "Marketing Brief.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-15", size: "12.5 MB", starred: true, shared: true, tags: ["marketing", "important"] },
-                { id: 3, name: "Website-Hero.jpg", type: "file", fileType: "image", lastModified: "2025-11-14", size: "3.1 MB", tags: ["website", "design"] },
-                { id: 4, name: "Q4_Report.docx", type: "file", fileType: "doc", lastModified: "2025-11-14", size: "876 KB", shared: true, tags: ["report", "finance"] },
-                { id: 5, name: "Onboarding.mp4", type: "file", fileType: "video", lastModified: "2025-11-12", size: "128.0 MB", tags: ["training", "video"] },
-                { id: 7, name: "archive.zip", type: "file", fileType: "zip", lastModified: "2025-11-09", size: "75.2 MB", tags: ["archive"] },
-                { id: 10, name: "presentation-final-v2.pptx", type: "file", fileType: "doc", lastModified: "2025-11-07", size: "22.1 MB", shared: true, tags: ["presentation"] },
+                { id: 1, name: "Project Alpha", type: "folder", lastModified: "2025-11-16", size: "1.2 GB", starred: true, shared: true, tags: ["project", "work"], security: "high", liveUsers: 2 },
+                { id: 6, name: "Branding", type: "folder", lastModified: "2025-11-10", size: "450 MB", shared: true, tags: ["design"], security: "medium" },
+                { id: 9, name: "Design System", type: "folder", lastModified: "2025-11-08", size: "88 MB", starred: true, tags: ["design", "ui"], security: "high" },
+                { id: 2, name: "Marketing Brief.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-15", size: "12.5 MB", starred: true, shared: true, tags: ["marketing", "important"], security: "high", liveUsers: 1 },
+                { id: 3, name: "Website-Hero.jpg", type: "file", fileType: "image", lastModified: "2025-11-14", size: "3.1 MB", tags: ["website", "design"], security: "medium" },
+                { id: 4, name: "Q4_Report.docx", type: "file", fileType: "doc", lastModified: "2025-11-14", size: "876 KB", shared: true, tags: ["report", "finance"], security: "high" },
+                { id: 5, name: "Onboarding.mp4", type: "file", fileType: "video", lastModified: "2025-11-12", size: "128.0 MB", tags: ["training", "video"], security: "medium" },
+                { id: 7, name: "archive.zip", type: "file", fileType: "zip", lastModified: "2025-11-09", size: "75.2 MB", tags: ["archive"], security: "low" },
+                { id: 10, name: "presentation-final-v2.pptx", type: "file", fileType: "doc", lastModified: "2025-11-07", size: "22.1 MB", shared: true, tags: ["presentation"], security: "high" },
             ],
             '1': [ // Inside Project Alpha
-                { id: 101, name: "Roadmap.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-16", size: "2.1 MB", starred: true },
-                { id: 102, name: "UserFlows.png", type: "file", fileType: "image", lastModified: "2025-11-15", size: "5.6 MB", shared: true },
-                { id: 103, name: "Specs.docx", type: "file", fileType: "doc", lastModified: "2025-11-14", size: "300 KB" },
+                { id: 101, name: "Roadmap.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-16", size: "2.1 MB", starred: true, security: "high" },
+                { id: 102, name: "UserFlows.png", type: "file", fileType: "image", lastModified: "2025-11-15", size: "5.6 MB", shared: true, security: "medium" },
+                { id: 103, name: "Specs.docx", type: "file", fileType: "doc", lastModified: "2025-11-14", size: "300 KB", security: "high" },
             ],
             '6': [ // Inside Branding
-                { id: 104, name: "Logo_Final_v3.ai", type: "file", fileType: "image", lastModified: "2025-11-10", size: "15.0 MB", starred: true },
-                { id: 105, name: "Brand_Guidelines.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-10", size: "8.2 MB", shared: true },
+                { id: 104, name: "Logo_Final_v3.ai", type: "file", fileType: "image", lastModified: "2025-11-10", size: "15.0 MB", starred: true, security: "high" },
+                { id: 105, name: "Brand_Guidelines.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-10", size: "8.2 MB", shared: true, security: "high" },
             ],
             '9': [], // Empty folder
             'shared': [
-                { id: 201, name: "Vendor Contract.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-15", size: "1.1 MB", shared: true },
-                { id: 202, name: "Competitor Analysis.pptx", type: "file", fileType: "doc", lastModified: "2025-11-13", size: "10.4 MB", shared: true },
+                { id: 201, name: "Vendor Contract.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-15", size: "1.1 MB", shared: true, security: "high" },
+                { id: 202, name: "Competitor Analysis.pptx", type: "file", fileType: "doc", lastModified: "2025-11-13", size: "10.4 MB", shared: true, security: "medium" },
             ],
             'starred': [
-                { id: 1, name: "Project Alpha", type: "folder", lastModified: "2025-11-16", size: "1.2 GB", starred: true },
-                { id: 9, name: "Design System", type: "folder", lastModified: "2025-11-08", size: "88 MB", starred: true },
-                { id: 2, name: "Marketing Brief.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-15", size: "12.5 MB", starred: true },
+                { id: 1, name: "Project Alpha", type: "folder", lastModified: "2025-11-16", size: "1.2 GB", starred: true, security: "high" },
+                { id: 9, name: "Design System", type: "folder", lastModified: "2025-11-08", size: "88 MB", starred: true, security: "high" },
+                { id: 2, name: "Marketing Brief.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-15", size: "12.5 MB", starred: true, security: "high" },
             ],
             'recents': [
-                { id: 5, name: "Onboarding.mp4", type: "file", fileType: "video", lastModified: "2025-11-12", size: "128.0 MB" },
-                { id: 2, name: "Marketing Brief.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-15", size: "12.5 MB" },
-                { id: 102, name: "UserFlows.png", type: "file", fileType: "image", lastModified: "2025-11-15", size: "5.6 MB" },
+                { id: 5, name: "Onboarding.mp4", type: "file", fileType: "video", lastModified: "2025-11-12", size: "128.0 MB", security: "medium" },
+                { id: 2, name: "Marketing Brief.pdf", type: "file", fileType: "pdf", lastModified: "2025-11-15", size: "12.5 MB", security: "high" },
+                { id: 102, name: "UserFlows.png", type: "file", fileType: "image", lastModified: "2025-11-15", size: "5.6 MB", security: "medium" },
             ],
             'trash': [
-                { id: 301, name: "old_draft.txt", type: "file", fileType: "doc", lastModified: "2025-10-01", size: "2 KB" },
-                { id: 302, name: "temp_image.jpg", type: "file", fileType: "image", lastModified: "2025-10-05", size: "1.1 MB" },
+                { id: 301, name: "old_draft.txt", type: "file", fileType: "doc", lastModified: "2025-10-01", size: "2 KB", security: "low" },
+                { id: 302, name: "temp_image.jpg", type: "file", fileType: "image", lastModified: "2025-10-05", size: "1.1 MB", security: "low" },
             ]
         };
 
@@ -1085,6 +1920,16 @@
         const uploadEmptyBtn = document.getElementById('upload-empty-btn');
         const quickShareBtn = document.getElementById('quick-share-btn');
         
+        // AI Search
+        const aiSearch = document.getElementById('ai-search');
+        const aiSearchBtn = document.getElementById('ai-search-btn');
+        const aiSearchSuggestions = document.getElementById('ai-search-suggestions');
+        
+        // New advanced buttons
+        const aiOrganizeBtn = document.getElementById('ai-organize-btn');
+        const collaborationBtn = document.getElementById('collaboration-btn');
+        const activityBtn = document.getElementById('activity-btn');
+        
         // View toggles
         const viewToggleList = document.getElementById('view-toggle-list');
         const viewToggleGrid = document.getElementById('view-toggle-grid');
@@ -1103,12 +1948,17 @@
         const contextDelete = document.getElementById('context-delete');
         const contextPreview = document.getElementById('context-preview');
         const contextShare = document.getElementById('context-share');
+        const contextCollaborate = document.getElementById('context-collaborate');
+        const contextComment = document.getElementById('context-comment');
+        const contextAnnotate = document.getElementById('context-annotate');
         const contextStar = document.getElementById('context-star');
         const contextRename = document.getElementById('context-rename');
         const contextDownload = document.getElementById('context-download');
         const contextVersions = document.getElementById('context-versions');
         const contextDuplicate = document.getElementById('context-duplicate');
         const contextMove = document.getElementById('context-move');
+        const contextEncrypt = document.getElementById('context-encrypt');
+        const contextSign = document.getElementById('context-sign');
         const contextRestore = document.getElementById('context-restore');
         
         // Modals
@@ -1122,6 +1972,14 @@
         const previewOtherIcon = document.getElementById('preview-other-icon');
         const downloadButtonModal = document.getElementById('download-button-modal');
         const shareButtonModal = document.getElementById('share-button-modal');
+        const collaborateButtonModal = document.getElementById('collaborate-button-modal');
+        const encryptButtonModal = document.getElementById('encrypt-button-modal');
+        const previewAnnotationBtn = document.getElementById('preview-annotation-btn');
+        const previewCommentBtn = document.getElementById('preview-comment-btn');
+        const commentsPanel = document.getElementById('comments-panel');
+        const closeCommentsPanel = document.getElementById('close-comments-panel');
+        const commentsList = document.getElementById('comments-list');
+        const annotationMarkers = document.getElementById('annotation-markers');
         
         const shareModal = document.getElementById('share-modal');
         const closeShareModal = document.getElementById('close-modal-share');
@@ -1132,6 +1990,24 @@
         
         const versionModal = document.getElementById('version-modal');
         const closeVersionModal = document.getElementById('close-version-modal');
+        
+        // New modals
+        const analyticsModal = document.getElementById('analytics-modal');
+        const closeAnalyticsModal = document.getElementById('close-analytics-modal');
+        const analyticsModalContent = analyticsModal.querySelector('.modal-content');
+        
+        const automationModal = document.getElementById('automation-modal');
+        const closeAutomationModal = document.getElementById('close-automation-modal');
+        const automationModalContent = automationModal.querySelector('.modal-content');
+        const addAutomationBtn = document.getElementById('add-automation-btn');
+        
+        const activityModal = document.getElementById('activity-modal');
+        const closeActivityModal = document.getElementById('close-activity-modal');
+        const activityModalContent = activityModal.querySelector('.modal-content');
+        
+        const collaborationModal = document.getElementById('collaboration-modal');
+        const closeCollaborationModal = document.getElementById('close-collaboration-modal');
+        const collaborationModalContent = collaborationModal.querySelector('.modal-content');
 
         // --- Theme Toggle ---
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -1167,6 +2043,19 @@
                     return `<svg class="${sizeClasses}" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H30L40 14V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="#FEF3C7" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/><path d="M30 4L40 14H30V4Z" fill="#FDE68A" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/><path d="M20 20V28L24 26" stroke="#92400E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 22C28 23.1046 27.1046 24 26 24C24.8954 24 24 23.1046 24 22C24 20.8954 24.8954 20 26 20C27.1046 20 28 20.8954 28 22Z" fill="#92400E" stroke="#92400E" stroke-width="2"/></svg>`;
                 default:
                     return `<svg class="${sizeClasses}" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H30L40 14V42C40 43.1046 39.1046 44 38 44H10C8.89543 44 8 43.1046 8 42V6C8 4.89543 8.89543 4 10 4Z" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="2" stroke-linejoin="round"/><path d="M30 4L40 14H30V4Z" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="2" stroke-linejoin="round"/></svg>`;
+            }
+        }
+
+        function getSecurityIcon(security) {
+            switch(security) {
+                case 'high':
+                    return `<i data-lucide="shield-check" class="w-4 h-4 security-high"></i>`;
+                case 'medium':
+                    return `<i data-lucide="shield" class="w-4 h-4 security-medium"></i>`;
+                case 'low':
+                    return `<i data-lucide="shield-off" class="w-4 h-4 security-low"></i>`;
+                default:
+                    return `<i data-lucide="shield" class="w-4 h-4 text-gray-400"></i>`;
             }
         }
 
@@ -1296,16 +2185,18 @@
             filteredFiles.forEach(file => {
                 const fileTypeKey = file.type === 'folder' ? 'folder' : file.fileType;
                 const isSelected = selectedFiles.has(file.id);
+                const hasLiveUsers = file.liveUsers && file.liveUsers > 0;
 
                 // Grid View
                 const fileCard = document.createElement('div');
-                fileCard.className = `file-card bg-white dark:bg-gray-800 rounded-xl shadow-sm border ${isSelected ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-gray-200 dark:border-gray-700'} p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200`;
+                fileCard.className = `file-card bg-white dark:bg-gray-800 rounded-xl shadow-sm border ${isSelected ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-gray-200 dark:border-gray-700'} p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 ${hasLiveUsers ? 'live-indicator' : ''}`;
                 fileCard.dataset.fileId = file.id;
                 fileCard.innerHTML = `
                     <div class="relative mb-3">
                         ${getFileIcon(fileTypeKey, 'w-12 h-12')}
                         ${file.starred ? `<i data-lucide="star" class="absolute -top-1 -right-1 w-5 h-5 text-amber-500 fill-amber-500"></i>` : ''}
                         ${file.shared ? `<div class="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"><i data-lucide="users" class="w-3 h-3 text-white"></i></div>` : ''}
+                        ${file.security ? `<div class="absolute -top-1 -left-1">${getSecurityIcon(file.security)}</div>` : ''}
                     </div>
                     <div class="w-full">
                         <span class="file-name w-full text-sm font-medium text-gray-800 dark:text-gray-100 truncate block">${file.name}</span>
@@ -1314,19 +2205,23 @@
                             <span class="text-xs text-gray-500 dark:text-gray-400">${file.size}</span>
                             ${isSelected ? `<i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>` : ''}
                         </div>
+                        ${hasLiveUsers ? `<div class="mt-1 flex items-center justify-center">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+                            <span class="text-xs text-green-600 dark:text-green-400">${file.liveUsers} active</span>
+                        </div>` : ''}
                     </div>
                 `;
 
                 // List View
                 const fileListItem = document.createElement('div');
-                fileListItem.className = `file-list-item grid grid-cols-12 gap-4 items-center px-4 py-3 border-b border-gray-200 dark:border-gray-700 cursor-pointer transition-colors duration-150 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`;
+                fileListItem.className = `file-list-item grid grid-cols-12 gap-4 items-center px-4 py-3 border-b border-gray-200 dark:border-gray-700 cursor-pointer transition-colors duration-150 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''} ${hasLiveUsers ? 'live-indicator' : ''}`;
                 fileListItem.dataset.fileId = file.id;
                 fileListItem.innerHTML = `
                     <div class="col-span-1">
                         ${isSelected ? `<i data-lucide="check-circle" class="w-5 h-5 text-blue-500"></i>` : 
                           `<div class="w-5 h-5 rounded border border-gray-300 dark:border-gray-600"></div>`}
                     </div>
-                    <div class="col-span-11 md:col-span-5 flex items-center min-w-0">
+                    <div class="col-span-11 md:col-span-4 flex items-center min-w-0">
                         <div class="relative">
                             ${getFileIcon(fileTypeKey, 'w-6 h-6 flex-shrink-0')}
                             ${file.starred ? `<i data-lucide="star" class="absolute -top-1 -right-1 w-3 h-3 text-amber-500 fill-amber-500"></i>` : ''}
@@ -1344,11 +2239,14 @@
                     <div class="col-span-6 md:col-span-2 text-sm text-gray-600 dark:text-gray-400">
                         ${file.shared ? '3 people' : 'Only you'}
                     </div>
+                    <div class="col-span-6 md:col-span-1 flex items-center justify-center">
+                        ${file.security ? getSecurityIcon(file.security) : ''}
+                    </div>
                 `;
 
                 // Compact View
                 const fileCompactItem = document.createElement('div');
-                fileCompactItem.className = `flex items-center px-3 py-2 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`;
+                fileCompactItem.className = `flex items-center px-3 py-2 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''} ${hasLiveUsers ? 'live-indicator' : ''}`;
                 fileCompactItem.dataset.fileId = file.id;
                 fileCompactItem.innerHTML = `
                     <div class="w-6 h-6 mr-3">
@@ -1359,6 +2257,10 @@
                     <span class="text-xs text-gray-500 dark:text-gray-400 ml-3">${file.size}</span>
                     ${file.starred ? `<i data-lucide="star" class="w-4 h-4 ml-3 text-amber-500 fill-amber-500"></i>` : ''}
                     ${isSelected ? `<i data-lucide="check-circle" class="w-4 h-4 ml-3 text-blue-500"></i>` : ''}
+                    ${hasLiveUsers ? `<div class="ml-3 flex items-center">
+                        <div class="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+                        <span class="text-xs text-green-600 dark:text-green-400">${file.liveUsers}</span>
+                    </div>` : ''}
                 `;
 
                 // Add event listeners to all views
@@ -1477,10 +2379,16 @@
                 contextPreview.classList.add('opacity-50', 'pointer-events-none');
                 contextDownload.classList.add('opacity-50', 'pointer-events-none');
                 contextVersions.classList.add('opacity-50', 'pointer-events-none');
+                contextAnnotate.classList.add('opacity-50', 'pointer-events-none');
+                contextComment.classList.add('opacity-50', 'pointer-events-none');
+                contextCollaborate.classList.add('opacity-50', 'pointer-events-none');
             } else {
                 contextPreview.classList.remove('opacity-50', 'pointer-events-none');
                 contextDownload.classList.remove('opacity-50', 'pointer-events-none');
                 contextVersions.classList.remove('opacity-50', 'pointer-events-none');
+                contextAnnotate.classList.remove('opacity-50', 'pointer-events-none');
+                contextComment.classList.remove('opacity-50', 'pointer-events-none');
+                contextCollaborate.classList.remove('opacity-50', 'pointer-events-none');
             }
 
             // Update star icon
@@ -1549,6 +2457,42 @@
             if (currentFileForContext) {
                 currentFileForModal = currentFileForContext;
                 openShareModal();
+                hideContextMenu();
+            }
+        });
+
+        contextCollaborate.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentFileForContext && currentFileForContext.type !== 'folder') {
+                currentFileForModal = currentFileForContext;
+                openCollaborationModal();
+                hideContextMenu();
+            }
+        });
+
+        contextComment.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentFileForContext && currentFileForContext.type !== 'folder') {
+                currentFileForModal = currentFileForContext;
+                openPreviewModal(currentFileForContext);
+                // Show comments panel after modal opens
+                setTimeout(() => {
+                    commentsPanel.classList.remove('hidden');
+                }, 300);
+                hideContextMenu();
+            }
+        });
+
+        contextAnnotate.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentFileForContext && currentFileForContext.type !== 'folder') {
+                currentFileForModal = currentFileForContext;
+                openPreviewModal(currentFileForContext);
+                // Enable annotation mode after modal opens
+                setTimeout(() => {
+                    annotationMarkers.classList.remove('hidden');
+                    addAnnotationMarkers();
+                }, 300);
                 hideContextMenu();
             }
         });
@@ -1636,6 +2580,30 @@
                     showToast('File moved', `${file.name} has been moved.`);
                     filterAndRenderFiles();
                 }
+                hideContextMenu();
+            }
+        });
+
+        contextEncrypt.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentFileForContext) {
+                const currentFolderId = breadcrumbStack.at(-1).id;
+                const file = fileSystem[currentFolderId]?.find(f => f.id === currentFileForContext.id);
+                
+                if (file) {
+                    file.security = file.security === 'high' ? 'medium' : 'high';
+                    const securityLevel = file.security === 'high' ? 'high' : 'medium';
+                    showToast('Security updated', `${file.name} security level set to ${securityLevel}.`);
+                    filterAndRenderFiles();
+                }
+                hideContextMenu();
+            }
+        });
+
+        contextSign.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentFileForContext) {
+                showToast('Digital signature added', `A digital signature has been added to ${currentFileForContext.name}.`);
                 hideContextMenu();
             }
         });
@@ -1750,6 +2718,12 @@
                 previewOther.classList.remove('hidden');
                 previewOtherIcon.innerHTML = getFileIcon(fileTypeKey, 'w-24 h-24 text-gray-400');
             }
+            
+            // Reset annotations and comments
+            annotationMarkers.classList.add('hidden');
+            annotationMarkers.innerHTML = '';
+            commentsPanel.classList.add('hidden');
+            
             openModal(previewModal, previewModalContent);
         }
 
@@ -1768,6 +2742,46 @@
             openModal(versionModal, versionModal.querySelector('.modal-content'));
         }
 
+        function openAnalyticsModal() {
+            openModal(analyticsModal, analyticsModalContent);
+        }
+
+        function openAutomationModal() {
+            openModal(automationModal, automationModalContent);
+        }
+
+        function openActivityModal() {
+            openModal(activityModal, activityModalContent);
+        }
+
+        function openCollaborationModal() {
+            if (currentFileForModal) {
+                document.getElementById('collaboration-filename').textContent = currentFileForModal.name;
+                openModal(collaborationModal, collaborationModalContent);
+            }
+        }
+
+        function addAnnotationMarkers() {
+            // Add sample annotation markers
+            const markers = [
+                { id: 1, x: 20, y: 30, text: "A" },
+                { id: 2, x: 70, y: 50, text: "B" },
+                { id: 3, x: 40, y: 70, text: "C" }
+            ];
+            
+            markers.forEach(marker => {
+                const markerEl = document.createElement('div');
+                markerEl.className = 'annotation-marker';
+                markerEl.style.left = `${marker.x}%`;
+                markerEl.style.top = `${marker.y}%`;
+                markerEl.textContent = marker.text;
+                markerEl.addEventListener('click', () => {
+                    showToast('Annotation', `Annotation ${marker.text}: Click to add details.`);
+                });
+                annotationMarkers.appendChild(markerEl);
+            });
+        }
+
         // Modal event listeners
         closePreviewModal.addEventListener('click', () => closeModal(previewModal, previewModalContent));
         previewModal.addEventListener('click', (e) => {
@@ -1777,6 +2791,65 @@
         shareButtonModal.addEventListener('click', () => openShareModal());
         downloadButtonModal.addEventListener('click', () => {
             if (currentFileForModal) downloadFile(currentFileForModal);
+        });
+        collaborateButtonModal.addEventListener('click', () => {
+            if (currentFileForModal) openCollaborationModal();
+        });
+        encryptButtonModal.addEventListener('click', () => {
+            if (currentFileForModal) {
+                const currentFolderId = breadcrumbStack.at(-1).id;
+                const file = fileSystem[currentFolderId]?.find(f => f.id === currentFileForModal.id);
+                
+                if (file) {
+                    file.security = file.security === 'high' ? 'medium' : 'high';
+                    const securityLevel = file.security === 'high' ? 'high' : 'medium';
+                    showToast('Security updated', `${file.name} security level set to ${securityLevel}.`);
+                    closeModal(previewModal, previewModalContent);
+                    filterAndRenderFiles();
+                }
+            }
+        });
+
+        previewAnnotationBtn.addEventListener('click', () => {
+            annotationMarkers.classList.toggle('hidden');
+            if (!annotationMarkers.classList.contains('hidden')) {
+                addAnnotationMarkers();
+            }
+        });
+
+        previewCommentBtn.addEventListener('click', () => {
+            commentsPanel.classList.toggle('hidden');
+            if (!commentsPanel.classList.contains('hidden')) {
+                // Load sample comments
+                commentsList.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex">
+                            <img class="w-8 h-8 rounded-full mr-3" src="https://placehold.co/32x32/8B5CF6/FFF?text=MB" alt="User">
+                            <div class="flex-1">
+                                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Maria Brown</p>
+                                    <p class="text-sm text-gray-700 dark:text-gray-300">Great work on this! Can we add more details about the budget?</p>
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">2 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <img class="w-8 h-8 rounded-full mr-3" src="https://placehold.co/32x32/10B981/FFF?text=SK" alt="User">
+                            <div class="flex-1">
+                                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Sam Kim</p>
+                                    <p class="text-sm text-gray-700 dark:text-gray-300">I'll update the budget section by tomorrow.</p>
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">1 hour ago</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        closeCommentsPanel.addEventListener('click', () => {
+            commentsPanel.classList.add('hidden');
         });
 
         closeShareModal.addEventListener('click', () => closeModal(shareModal, shareModalContent));
@@ -1789,6 +2862,26 @@
             if (e.target === versionModal) closeModal(versionModal, versionModal.querySelector('.modal-content'));
         });
 
+        closeAnalyticsModal.addEventListener('click', () => closeModal(analyticsModal, analyticsModalContent));
+        analyticsModal.addEventListener('click', (e) => {
+            if (e.target === analyticsModal) closeModal(analyticsModal, analyticsModalContent);
+        });
+
+        closeAutomationModal.addEventListener('click', () => closeModal(automationModal, automationModalContent));
+        automationModal.addEventListener('click', (e) => {
+            if (e.target === automationModal) closeModal(automationModal, automationModalContent);
+        });
+
+        closeActivityModal.addEventListener('click', () => closeModal(activityModal, activityModalContent));
+        activityModal.addEventListener('click', (e) => {
+            if (e.target === activityModal) closeModal(activityModal, activityModalContent);
+        });
+
+        closeCollaborationModal.addEventListener('click', () => closeModal(collaborationModal, collaborationModalContent));
+        collaborationModal.addEventListener('click', (e) => {
+            if (e.target === collaborationModal) closeModal(collaborationModal, collaborationModalContent);
+        });
+
         copyLinkButton.addEventListener('click', () => {
             navigator.clipboard.writeText(shareLinkInput.value).then(() => {
                 copyLinkSuccess.classList.remove('hidden');
@@ -1798,6 +2891,19 @@
                     copyLinkButton.textContent = 'Copy';
                 }, 2000);
             });
+        });
+
+        // Share modal advanced options
+        document.getElementById('link-expiry').addEventListener('change', (e) => {
+            document.getElementById('expiry-date').classList.toggle('hidden', !e.target.checked);
+        });
+
+        document.getElementById('link-password').addEventListener('change', (e) => {
+            document.getElementById('link-password-input').classList.toggle('hidden', !e.target.checked);
+        });
+
+        document.getElementById('download-limit').addEventListener('change', (e) => {
+            document.getElementById('download-limit-input').classList.toggle('hidden', !e.target.checked);
         });
 
         // --- File Upload Functions ---
@@ -1875,7 +2981,8 @@
                                 type: 'file',
                                 fileType: fileTypeKey,
                                 lastModified: new Date().toISOString().split('T')[0],
-                                size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`
+                                size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
+                                security: 'medium'
                             };
                             fileSystem[currentFolderId].unshift(newFile);
                             filterAndRenderFiles();
@@ -1935,6 +3042,28 @@
         // Advanced Search Panel
         advancedSearchToggle.addEventListener('click', () => {
             advancedSearchPanel.classList.toggle('hidden');
+        });
+
+        // AI Search
+        aiSearch.addEventListener('focus', () => {
+            aiSearchSuggestions.classList.remove('hidden');
+        });
+
+        aiSearch.addEventListener('blur', () => {
+            setTimeout(() => {
+                aiSearchSuggestions.classList.add('hidden');
+            }, 200);
+        });
+
+        aiSearchBtn.addEventListener('click', () => {
+            const query = aiSearch.value.trim();
+            if (query) {
+                showToast('AI Search', `Searching for "${query}" using AI-powered search...`);
+                // Simulate AI search results
+                setTimeout(() => {
+                    showToast('Search Complete', `Found 3 results for "${query}"`);
+                }, 1500);
+            }
         });
 
         // Filter changes
@@ -2024,6 +3153,27 @@
             showToast('Refreshed', 'File list has been refreshed.');
         });
 
+        // Activity
+        activityBtn.addEventListener('click', () => {
+            openActivityModal();
+        });
+
+        // AI Organize
+        aiOrganizeBtn.addEventListener('click', () => {
+            showToast('AI Organization', 'AI is organizing your files...');
+            setTimeout(() => {
+                showToast('Organization Complete', 'AI has organized 23 files into 5 folders based on content.');
+            }, 2000);
+        });
+
+        // Collaboration
+        collaborationBtn.addEventListener('click', () => {
+            showToast('Collaboration', 'Opening real-time collaboration panel...');
+            setTimeout(() => {
+                openCollaborationModal();
+            }, 500);
+        });
+
         // Mobile Sidebar
         function toggleSidebar(show) {
             if (show) {
@@ -2098,6 +3248,27 @@
             toggleSidebar(false);
         });
 
+        document.getElementById('nav-analytics').addEventListener('click', (e) => {
+            e.preventDefault();
+            openAnalyticsModal();
+            updateActiveNav('nav-analytics');
+            toggleSidebar(false);
+        });
+
+        document.getElementById('nav-automation').addEventListener('click', (e) => {
+            e.preventDefault();
+            openAutomationModal();
+            updateActiveNav('nav-automation');
+            toggleSidebar(false);
+        });
+
+        document.getElementById('nav-security').addEventListener('click', (e) => {
+            e.preventDefault();
+            showToast('Security Center', 'Opening security settings...');
+            updateActiveNav('nav-security');
+            toggleSidebar(false);
+        });
+
         // New Folder button
         document.getElementById('new-folder-btn').addEventListener('click', (e) => {
             e.preventDefault();
@@ -2107,7 +3278,8 @@
                 name: "New Folder",
                 type: "folder",
                 lastModified: new Date().toISOString().split('T')[0],
-                size: "0 MB"
+                size: "0 MB",
+                security: "medium"
             };
             if (!fileSystem[currentFolderId]) fileSystem[currentFolderId] = [];
             fileSystem[currentFolderId].unshift(newFolder);
